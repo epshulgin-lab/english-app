@@ -779,7 +779,13 @@ function load(key, fallback){
 }
 function save(key, value){ localStorage.setItem(key, JSON.stringify(value)); }
 function normalizeDictionary(arr){
-  return arr.map(x => ({ status:'новое', reviewToday:false, addedAt:todayISO(), phonetic:'', pronounce:'', example:'', exampleTranslation:'', ...x }));
+  return arr.map(x => ({
+    status:'новое', reviewToday:false, addedAt:todayISO(),
+    phonetic:'', pronounce:'', example:'', exampleTranslation:'',
+    // SRS fields
+    srsInterval:1, srsEaseFactor:2.5, srsRepetitions:0, srsDueDate:todayISO(),
+    ...x
+  }));
 }
 function normalizeTopics(arr){
   return arr.map(x => typeof x === 'string' ? { title:x, text:'', translation:'' } : { title:'', text:'', translation:'', ...x });
@@ -795,6 +801,36 @@ function esc(s){
 }
 function percent(a,b){ return Math.min(100, Math.round((a / Math.max(1,b))*100)); }
 function safeJson(s){ return esc(JSON.stringify(s)); }
+
+// ─── SRS (SM-2) ──────────────────────────────────────────────
+function srsNextDate(days){ const d = new Date(); d.setDate(d.getDate()+days); return d.toISOString().slice(0,10); }
+function applySRS(item, quality){
+  // quality: 0=забыл, 1=трудно, 2=хорошо, 3=легко
+  let { srsInterval=1, srsEaseFactor=2.5, srsRepetitions=0 } = item;
+  if(quality === 0){
+    srsRepetitions = 0; srsInterval = 1;
+  } else {
+    if(srsRepetitions === 0) srsInterval = 1;
+    else if(srsRepetitions === 1) srsInterval = 3;
+    else srsInterval = Math.round(srsInterval * srsEaseFactor);
+    srsRepetitions += 1;
+    srsEaseFactor = Math.max(1.3, srsEaseFactor + 0.1 - (3-quality)*(0.08+(3-quality)*0.02));
+  }
+  const srsDueDate = srsNextDate(srsInterval);
+  const status = quality === 0 ? 'новое' : quality === 1 ? 'учу' : 'знаю';
+  return { ...item, srsInterval, srsEaseFactor, srsRepetitions, srsDueDate, status };
+}
+function srsDueToday(){ return state.dictionary.filter(w => !w.srsDueDate || w.srsDueDate <= todayISO()); }
+function streakCount(){
+  if(!state.tracker.length) return 0;
+  const dates = [...new Set(state.tracker.map(x=>x.date))].sort((a,b)=>b.localeCompare(a));
+  let streak=0; let expected=todayISO();
+  for(const d of dates){
+    if(d===expected){ streak++; const dt=new Date(expected); dt.setDate(dt.getDate()-1); expected=dt.toISOString().slice(0,10); }
+    else if(d<expected) break;
+  }
+  return streak;
+}
 
 // ─── Speech ──────────────────────────────────────────────────
 function getBestVoice(){
@@ -888,6 +924,8 @@ function renderDashboard(){
   const learningCount = state.dictionary.filter(w=>w.status==='учу').length;
   const knownCount = state.dictionary.filter(w=>w.status==='знаю').length;
   const reviewCount = state.dictionary.filter(w=>w.reviewToday).length;
+  const dueToday = srsDueToday().length;
+  const streak = streakCount();
   const byWeek = {};
   state.tracker.forEach(item => {
     const w = weekNumber(item.date);
@@ -905,6 +943,25 @@ function renderDashboard(){
       ${metricCard('Speaking за неделю', weeklySpeaking+' мин', state.settings.weeklySpeakingGoal+' мин', percent(weeklySpeaking, state.settings.weeklySpeakingGoal))}
       ${metricCard('Аудирование', weeklyListening+' дней', state.settings.weeklyListeningGoal+' дней', percent(weeklyListening, state.settings.weeklyListeningGoal))}
     </div>
+    <div class="grid-2-equal" style="margin-bottom:16px">
+      <div class="card" style="display:flex;align-items:center;gap:20px">
+        <div style="font-size:48px">🔥</div>
+        <div>
+          <div class="label">Серия дней подряд</div>
+          <div style="font-size:36px;font-weight:900;letter-spacing:-.02em">${streak} ${streak===1?'день':streak>=2&&streak<=4?'дня':'дней'}</div>
+          <div class="small-muted">${streak===0?'Начни сегодня — добавь тренировку в трекер':'Отличный прогресс, не прерывай!'}</div>
+        </div>
+      </div>
+      <div class="card" style="display:flex;align-items:center;gap:20px;${dueToday>0?'border-color:#fbbf24;background:#fffbeb':''}">
+        <div style="font-size:48px">🃏</div>
+        <div>
+          <div class="label">Повторение сегодня (SRS)</div>
+          <div style="font-size:36px;font-weight:900;letter-spacing:-.02em;color:${dueToday>0?'#d97706':'var(--text)'}">${dueToday}</div>
+          <div class="small-muted">${dueToday>0?`${dueToday} слов ждут повторения`:'Все слова повторены на сегодня ✓'}</div>
+          ${dueToday>0?`<button class="btn small" style="margin-top:8px" onclick="setTab('review')">Начать повторение →</button>`:''}
+        </div>
+      </div>
+    </div>
     <div class="grid-3">
       <div class="card">
         <h3 class="section-title">Цели на неделю</h3>
@@ -920,7 +977,7 @@ function renderDashboard(){
           <div class="mini-box">Новые<strong>${newCount}</strong></div>
           <div class="mini-box">Учу<strong>${learningCount}</strong></div>
           <div class="mini-box">Знаю<strong>${knownCount}</strong></div>
-          <div class="mini-box">Сегодня<strong>${reviewCount}</strong></div>
+          <div class="mini-box" style="${dueToday>0?'border-color:#fbbf24;background:#fffbeb':''}">На сегодня<strong style="${dueToday>0?'color:#d97706':''}">${dueToday}</strong></div>
         </div>
       </div>
       <div class="card">
@@ -1131,62 +1188,147 @@ function toggleReview(key){
   persist(); renderDictionary(); renderDashboard(); renderReview();
 }
 
-// ─── Review ───────────────────────────────────────────────────
-function wordsForReview(){ return state.dictionary.filter(item => item.reviewToday || item.status==='новое' || item.status==='учу'); }
+// ─── Review (SRS) ────────────────────────────────────────────
+function wordsForReview(){
+  const due = srsDueToday();
+  // Sort: overdue first, then by due date
+  return due.sort((a,b)=>(a.srsDueDate||'').localeCompare(b.srsDueDate||''));
+}
 function currentReviewWord(){ const arr = wordsForReview(); if(!arr.length) return null; return arr[state.flashIndex % arr.length]; }
 function renderReview(){
-  const w = currentReviewWord();
   const arr = wordsForReview();
+  const w = arr.length ? arr[state.flashIndex % arr.length] : null;
+  const totalDue = arr.length;
+  const doneToday = state.dictionary.filter(x=>x.srsDueDate && x.srsDueDate > todayISO() && x.srsRepetitions > 0).length;
+
   document.getElementById('review').innerHTML = `
-    <div class="grid-2" style="grid-template-columns:1.2fr 1fr">
+    <div class="grid-2" style="grid-template-columns:1.3fr 1fr">
       <div class="card">
-        <h3 class="section-title">Карточки на повторение</h3>
-        ${!w ? `<div class="small-muted">Нет слов для повторения. Отметь слова кнопкой «Повторить сегодня» или оставь статус «новое / учу».</div>` : `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+          <h3 class="section-title" style="margin:0">Интервальное повторение</h3>
+          <div class="chips">
+            <span class="chip" style="${totalDue>0?'background:#fff7ed;border-color:#fcd34d;color:#92400e':''}">
+              ${totalDue>0?`⏰ Осталось: ${totalDue}`:'✓ Все повторено'}
+            </span>
+            ${doneToday>0?`<span class="chip" style="background:#ecfdf5;border-color:#a7f3d0;color:#065f46">Сделано сегодня: ${doneToday}</span>`:''}
+          </div>
+        </div>
+        ${!w ? `
+          <div style="text-align:center;padding:40px 20px">
+            <div style="font-size:56px;margin-bottom:16px">🎉</div>
+            <div style="font-size:20px;font-weight:800;margin-bottom:8px">Все слова повторены!</div>
+            <div class="small-muted">Отличная работа. Следующие слова появятся завтра согласно расписанию.</div>
+            <div class="small-muted" style="margin-top:12px">Всего слов в словаре: <strong>${state.dictionary.length}</strong> · Знаю: <strong>${state.dictionary.filter(x=>x.status==='знаю').length}</strong></div>
+          </div>` : `
           <div class="review-card">
             <div>
-              <div class="small-muted">Карточка ${(state.flashIndex % arr.length)+1} из ${arr.length}</div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+                <div class="small-muted">Карточка ${(state.flashIndex % arr.length)+1} из ${arr.length}</div>
+                <div class="small-muted" style="font-size:11px">
+                  ${w.srsRepetitions>0?`Повторений: ${w.srsRepetitions} · Интервал: ${w.srsInterval} дн.`:'Первое повторение'}
+                </div>
+              </div>
               <div class="flash-word">${esc(w.word)}</div>
-              <div class="small-muted">${esc(w.category)}</div>
+              <div class="chips" style="margin-top:4px">
+                <span class="chip">${esc(w.category)}</span>
+              </div>
               ${(w.phonetic||w.pronounce)?`<div class="phonetics" style="margin-top:12px">
                 ${w.phonetic?`<span class="pill">${esc(w.phonetic)}</span>`:''}
                 ${w.pronounce?`<span class="pill">${esc(w.pronounce)}</span>`:''}
                 <button class="btn secondary small" onclick="speakText(${safeJson(w.word)})">🔊 Слово</button>
                 ${w.example?`<button class="btn secondary small" onclick="speakText(${safeJson(w.example)})">🔊 Пример</button>`:''}
               </div>`:''}
-              ${state.showAnswer?`<div style="margin-top:18px">
-                <div style="font-size:20px;font-weight:800">${esc(w.translation)}</div>
-                ${w.example?`<div class="item-card" style="margin-top:10px"><div>${esc(w.example)}</div>${w.exampleTranslation?`<div class="small-muted" style="margin-top:6px">${esc(w.exampleTranslation)}</div>`:''}</div>`:''}
+              ${state.showAnswer?`<div style="margin-top:18px;animation:fadeSlide .2s ease">
+                <div style="font-size:20px;font-weight:800;margin-bottom:10px">${esc(w.translation)}</div>
+                ${w.example?`<div class="item-card"><div>${esc(w.example)}</div>${w.exampleTranslation?`<div class="small-muted" style="margin-top:6px">${esc(w.exampleTranslation)}</div>`:''}</div>`:''}
               </div>`:''}
             </div>
-            <div class="button-row">
-              <button class="btn" onclick="toggleAnswer()">${state.showAnswer?'Скрыть ответ':'Показать ответ'}</button>
-              <button class="btn secondary" onclick="nextReview()">Следующее</button>
+            <div>
+              ${!state.showAnswer?`
+                <div class="button-row">
+                  <button class="btn" onclick="toggleAnswer()">Показать ответ</button>
+                </div>` : `
+                <div style="margin-top:16px">
+                  <div class="small-muted" style="margin-bottom:10px;font-weight:600">Как ты запомнил?</div>
+                  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+                    <button class="btn danger" style="flex-direction:column;padding:10px 6px;gap:2px" onclick="srsAnswer(0)">
+                      <span style="font-size:18px">😰</span>
+                      <span style="font-size:11px">Забыл</span>
+                      <span style="font-size:10px;opacity:.7">завтра</span>
+                    </button>
+                    <button class="btn secondary" style="flex-direction:column;padding:10px 6px;gap:2px" onclick="srsAnswer(1)">
+                      <span style="font-size:18px">😅</span>
+                      <span style="font-size:11px">Трудно</span>
+                      <span style="font-size:10px;opacity:.7">+2 дня</span>
+                    </button>
+                    <button class="btn soft" style="flex-direction:column;padding:10px 6px;gap:2px" onclick="srsAnswer(2)">
+                      <span style="font-size:18px">🙂</span>
+                      <span style="font-size:11px">Хорошо</span>
+                      <span style="font-size:10px;opacity:.7">+${w.srsRepetitions>1?Math.round((w.srsInterval||1)*(w.srsEaseFactor||2.5)):3} дня</span>
+                    </button>
+                    <button class="btn" style="flex-direction:column;padding:10px 6px;gap:2px;background:#059669" onclick="srsAnswer(3)">
+                      <span style="font-size:18px">🚀</span>
+                      <span style="font-size:11px">Легко</span>
+                      <span style="font-size:10px;opacity:.7">+${w.srsRepetitions>1?Math.round((w.srsInterval||1)*(w.srsEaseFactor||2.5))+3:7} дней</span>
+                    </button>
+                  </div>
+                </div>`}
             </div>
-          </div>
-          <div class="button-row" style="margin-top:12px">
-            <button class="btn secondary" onclick="markReviewStatus('новое')">Снова новое</button>
-            <button class="btn secondary" onclick="markReviewStatus('учу')">Оставить в учу</button>
-            <button class="btn" onclick="markReviewStatus('знаю')">Пометить как знаю</button>
           </div>`}
       </div>
+
       <div class="card">
-        <h3 class="section-title">Как работает повторение</h3>
+        <h3 class="section-title">Как работает SRS</h3>
         <div class="list">
-          <div class="item-card"><strong>1. Видишь слово</strong><div class="small-muted" style="margin-top:6px">Прочитай слово, вспомни перевод и пример. Нажми «Показать ответ» для проверки.</div></div>
-          <div class="item-card"><strong>2. Оцени себя</strong><div class="small-muted" style="margin-top:6px">Знаешь уверенно → «Знаю». Вспомнил с трудом → «Учу». Забыл → «Снова новое».</div></div>
-          <div class="item-card"><strong>3. Слушай примеры</strong><div class="small-muted" style="margin-top:6px">Нажимай 🔊 чтобы слышать произношение и запомнить звучание.</div></div>
-          <div class="item-card"><strong>4. Помечай на сегодня</strong><div class="small-muted" style="margin-top:6px">В словаре можно отметить нужные слова кнопкой «Повторить сегодня».</div></div>
+          <div class="item-card">
+            <strong>Что такое интервальное повторение</strong>
+            <div class="small-muted" style="margin-top:6px">Система показывает слово именно тогда, когда ты вот-вот его забудешь. Так мозг запоминает навсегда, а не на несколько дней.</div>
+          </div>
+          <div class="item-card">
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:4px">
+              <div style="background:#fef2f2;border-radius:8px;padding:8px;text-align:center"><div style="font-size:18px">😰</div><div style="font-size:12px;font-weight:700;color:#dc2626">Забыл</div><div style="font-size:11px;color:var(--muted)">→ завтра</div></div>
+              <div style="background:#fffbeb;border-radius:8px;padding:8px;text-align:center"><div style="font-size:18px">😅</div><div style="font-size:12px;font-weight:700;color:#d97706">Трудно</div><div style="font-size:11px;color:var(--muted)">→ +2 дня</div></div>
+              <div style="background:#eef2ff;border-radius:8px;padding:8px;text-align:center"><div style="font-size:18px">🙂</div><div style="font-size:12px;font-weight:700;color:#3b5bdb">Хорошо</div><div style="font-size:11px;color:var(--muted)">→ +N дней</div></div>
+              <div style="background:#ecfdf5;border-radius:8px;padding:8px;text-align:center"><div style="font-size:18px">🚀</div><div style="font-size:12px;font-weight:700;color:#059669">Легко</div><div style="font-size:11px;color:var(--muted)">→ +ещё больше</div></div>
+            </div>
+            <div class="small-muted" style="margin-top:6px;font-size:12px">Чем увереннее знаешь — тем дольше следующий интервал. Это алгоритм SM-2, такой же как в Anki.</div>
+          </div>
+          <div class="item-card">
+            <strong>Совет</strong>
+            <div class="small-muted" style="margin-top:6px">Занимайся каждый день по 10–15 минут. Регулярность важнее длительности — система сама распределит нагрузку.</div>
+          </div>
+          <div class="item-card">
+            <strong>Статистика словаря</strong>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px">
+              <div style="text-align:center"><div style="font-size:20px;font-weight:900">${state.dictionary.filter(x=>x.status==='новое').length}</div><div class="small-muted" style="font-size:11px">Новые</div></div>
+              <div style="text-align:center"><div style="font-size:20px;font-weight:900;color:#2563eb">${state.dictionary.filter(x=>x.status==='учу').length}</div><div class="small-muted" style="font-size:11px">Учу</div></div>
+              <div style="text-align:center"><div style="font-size:20px;font-weight:900;color:#059669">${state.dictionary.filter(x=>x.status==='знаю').length}</div><div class="small-muted" style="font-size:11px">Знаю</div></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>`;
 }
 function toggleAnswer(){ state.showAnswer = !state.showAnswer; renderReview(); }
 function nextReview(){ state.showAnswer = false; state.flashIndex += 1; renderReview(); }
-function markReviewStatus(status){
+function srsAnswer(quality){
   const w = currentReviewWord(); if(!w) return;
-  state.dictionary = state.dictionary.map(item => item.word===w.word && item.translation===w.translation && item.category===w.category && (item.example||'')===(w.example||'') ? {...item, status, reviewToday:status!=='знаю'} : item);
-  persist(); state.showAnswer = false; state.flashIndex += 1;
+  const updated = applySRS(w, quality);
+  state.dictionary = state.dictionary.map(item =>
+    item.word===w.word && item.translation===w.translation && item.category===w.category && (item.example||'')===(w.example||'')
+      ? updated : item
+  );
+  persist();
+  state.showAnswer = false;
+  // Remove answered word from current session by advancing index
+  const remaining = wordsForReview(); // recalculated after update
+  if(remaining.length === 0) state.flashIndex = 0;
+  else state.flashIndex = state.flashIndex % Math.max(1, remaining.length);
   renderReview(); renderDictionary(); renderDashboard();
+}
+function markReviewStatus(status){
+  const quality = status==='знаю'?3:status==='учу'?1:0;
+  srsAnswer(quality);
 }
 
 // ─── Topics ───────────────────────────────────────────────────
