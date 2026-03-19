@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="English Learning App — бизнес-словарь, трекер прогресса, карточки, speaking темы и грамматика." />
+  <title>English Learning App v3</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --line:#dbe3ef;
+      --line-hover:#c3cfe4;
+      --primary:#3b5bdb;
+      --primary-dark:#2f4ac4;
+      --primary-soft:#eef2ff;
+      --primary-text:#3730a3;
+      --green:#059669;
+      --green-soft:#ecfdf5;
+      --amber:#d97706;
+      --red:#dc2626;
+      --shadow:0 1px 3px rgba(0,0,0,.06),0 8px 24px rgba(0,0,0,.05);
+      --shadow-lg:0 4px 6px rgba(0,0,0,.04),0 20px 40px rgba(0,0,0,.07);
+      --shadow-sm:0 1px 2px rgba(0,0,0,.05);
+      --radius:16px;
+      --radius-sm:12px;
+      --radius-xs:8px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'Inter','Segoe UI','Helvetica Neue',Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      line-height:1.55;
+      -webkit-font-smoothing:antialiased;
+    }
+    .container{max-width:1280px;margin:0 auto;padding:20px}
+    .hero{
+      background:linear-gradient(135deg,#3b5bdb 0%,#6741d9 50%,#ae3ec9 100%);
+      border-radius:var(--radius);
+      padding:28px 32px;
+      margin-bottom:20px;
+      color:#fff;
+      position:relative;
+      overflow:hidden;
+      box-shadow:0 4px 24px rgba(59,91,219,.25);
+    }
+    .hero::before{
+      content:"";position:absolute;top:-40%;right:-10%;
+      width:400px;height:400px;
+      background:radial-gradient(circle,rgba(255,255,255,.12),transparent 70%);
+      pointer-events:none;
+    }
+    .hero::after{
+      content:"";position:absolute;bottom:-30%;left:-5%;
+      width:300px;height:300px;
+      background:radial-gradient(circle,rgba(255,255,255,.08),transparent 70%);
+      pointer-events:none;
+    }
+    .hero *{position:relative;z-index:1}
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:24px;
+      transition:box-shadow .2s ease,border-color .2s ease;
+    }
+    .card:hover{box-shadow:var(--shadow-lg);border-color:var(--line-hover)}
+    h1{margin:0 0 8px;font-size:clamp(24px,3vw,34px);font-weight:900;line-height:1.15;letter-spacing:-.025em}
+    h2,h3{margin:0;letter-spacing:-.02em}
+    .hero-muted{color:rgba(255,255,255,.85);font-size:14px;line-height:1.6}
+    .badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+    .badge{
+      display:inline-flex;align-items:center;gap:5px;padding:5px 12px;
+      border-radius:999px;font-size:12px;font-weight:700;
+      background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);
+      color:#fff;backdrop-filter:blur(8px);
+    }
+    .tabs{
+      display:flex;gap:4px;flex-wrap:wrap;
+      margin:0 0 20px;align-items:center;
+      background:var(--card);padding:6px;
+      border-radius:var(--radius);border:1px solid var(--line);
+      box-shadow:var(--shadow-sm);
+    }
+    .tab{
+      border:none;background:transparent;border-radius:var(--radius-sm);
+      padding:9px 16px;cursor:pointer;font-weight:700;font-size:13px;
+      color:var(--muted);transition:all .18s ease;font-family:inherit;
+    }
+    .tab:hover{background:var(--bg);color:var(--text)}
+    .tab.active{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(59,91,219,.3)}
+    .tab-pane{display:none}
+    .tab-pane.active{display:block;animation:fadeSlide .22s ease}
+    .dashboard-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .grid-2{display:grid;grid-template-columns:1fr 1.4fr;gap:16px}
+    .grid-2-equal{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .metric .label{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+    .metric .value{font-size:34px;font-weight:900;margin:10px 0 4px;letter-spacing:-.02em}
+    .progress{height:8px;background:var(--bg);border-radius:999px;overflow:hidden;margin-top:10px}
+    .bar{height:100%;background:linear-gradient(90deg,var(--primary),#6741d9);border-radius:999px;transition:width .4s ease}
+    label{display:block;font-size:12px;font-weight:600;margin-bottom:6px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+    input,textarea,select{
+      width:100%;padding:10px 13px;
+      border-radius:var(--radius-xs);border:1.5px solid var(--line);
+      background:var(--card);font:inherit;font-size:14px;
+      color:var(--text);transition:border-color .15s ease,box-shadow .15s ease;
+    }
+    input:focus,textarea:focus,select:focus{
+      outline:none;border-color:var(--primary);
+      box-shadow:0 0 0 3px rgba(59,91,219,.12);
+    }
+    textarea{min-height:88px;resize:vertical}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:6px;
+      border:none;background:var(--primary);color:#fff;font-weight:700;font-size:14px;
+      padding:10px 18px;border-radius:var(--radius-xs);cursor:pointer;
+      transition:all .15s ease;box-shadow:0 1px 3px rgba(59,91,219,.2);
+      font-family:inherit;
+    }
+    .btn:hover{background:var(--primary-dark);box-shadow:0 4px 12px rgba(59,91,219,.25);transform:translateY(-1px)}
+    .btn:active{transform:translateY(0)}
+    .btn.secondary{
+      background:var(--card);color:var(--text);border:1.5px solid var(--line);
+      box-shadow:var(--shadow-sm);
+    }
+    .btn.secondary:hover{background:var(--bg);border-color:var(--line-hover)}
+    .btn.soft{background:var(--primary-soft);color:var(--primary-text);box-shadow:none}
+    .btn.soft:hover{background:#e0e7ff}
+    .btn.small{padding:6px 12px;font-size:12px;border-radius:var(--radius-xs)}
+    .btn.danger{background:#fef2f2;color:#dc2626;border:1.5px solid #fecaca;box-shadow:none}
+    .btn.danger:hover{background:#fee2e2;border-color:#fca5a5}
+    .section-title{margin:0 0 16px;font-size:17px;font-weight:800;letter-spacing:-.015em}
+    .list{display:flex;flex-direction:column;gap:10px}
+    .word-card,.item-card,.resource-card{
+      border:1px solid var(--line);border-radius:var(--radius-sm);
+      padding:15px;background:var(--card);transition:all .15s ease;
+    }
+    .item-card:hover,.word-card:hover,.resource-card:hover{border-color:var(--line-hover);box-shadow:var(--shadow)}
+    .word-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .word-title{font-size:18px;font-weight:800;letter-spacing:-.01em}
+    .status-new{background:var(--text);color:#fff;border-color:var(--text)}
+    .status-learning{background:#eff6ff;color:#2563eb;border-color:#bfdbfe}
+    .status-known{background:#ecfdf5;color:#059669;border-color:#a7f3d0}
+    .small-muted{font-size:13px;color:var(--muted)}
+    .button-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .chips{display:flex;gap:6px;flex-wrap:wrap}
+    .chip,.pill{
+      display:inline-flex;align-items:center;gap:4px;padding:4px 10px;
+      border-radius:999px;font-size:12px;font-weight:600;
+      border:1px solid var(--line);background:var(--bg);color:var(--muted);
+    }
+    .phonetics{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .filters{display:flex;gap:8px;flex-wrap:wrap}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .review-card{
+      min-height:300px;display:flex;flex-direction:column;justify-content:space-between;
+      border:1.5px solid var(--line);border-radius:var(--radius);
+      padding:26px;background:linear-gradient(180deg,#fff,#fafafe);
+      box-shadow:var(--shadow);
+    }
+    .flash-word{
+      font-size:36px;font-weight:900;margin:14px 0 6px;letter-spacing:-.02em;
+      background:linear-gradient(135deg,var(--primary),#6741d9);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .mini-box{
+      padding:14px;border:1px solid var(--line);border-radius:var(--radius-sm);
+      background:var(--card);font-size:12px;font-weight:600;
+      color:var(--muted);text-transform:uppercase;letter-spacing:.03em;
+    }
+    .mini-box strong{display:block;font-size:24px;margin-top:6px;color:var(--text);letter-spacing:-.02em;font-weight:900}
+    a.resource-card{text-decoration:none;color:inherit;display:block}
+    .topic-text{white-space:pre-line;line-height:1.7;font-size:14px}
+    .notice{
+      padding:13px 15px;border:1px solid #c7d2fe;background:var(--primary-soft);
+      border-radius:var(--radius-sm);font-size:13px;color:var(--primary-text);line-height:1.5;
+    }
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .copy-ok{color:var(--green);font-size:12px;margin-left:6px;font-weight:600}
+
+    /* Grammar tab */
+    .grammar-grid{display:grid;grid-template-columns:260px 1fr;gap:16px;align-items:start}
+    .grammar-nav{display:flex;flex-direction:column;gap:4px}
+    .grammar-nav-item{
+      padding:10px 14px;border-radius:var(--radius-xs);border:none;background:transparent;
+      cursor:pointer;font:inherit;font-size:14px;font-weight:600;color:var(--muted);
+      text-align:left;transition:all .15s ease;
+    }
+    .grammar-nav-item:hover{background:var(--bg);color:var(--text)}
+    .grammar-nav-item.active{background:var(--primary-soft);color:var(--primary-text)}
+    .grammar-nav-category{
+      font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;
+      letter-spacing:.06em;padding:12px 14px 4px;
+    }
+    .grammar-content{display:none}
+    .grammar-content.active{display:block;animation:fadeSlide .2s ease}
+    .rule-block{
+      border:1px solid var(--line);border-radius:var(--radius-sm);
+      padding:18px;background:var(--card);margin-bottom:12px;
+    }
+    .rule-block h4{font-size:15px;font-weight:800;margin-bottom:10px;letter-spacing:-.01em}
+    .rule-block p{font-size:14px;line-height:1.7;color:#374151;margin-bottom:10px}
+    .rule-block p:last-child{margin-bottom:0}
+    .rule-example{
+      background:#f8faff;border:1px solid #dbe8ff;border-radius:var(--radius-xs);
+      padding:10px 14px;font-size:14px;margin-top:8px;line-height:1.6;
+    }
+    .rule-example em{color:var(--primary);font-style:normal;font-weight:700}
+    .rule-formula{
+      background:#fafafa;border:1px solid var(--line);border-radius:var(--radius-xs);
+      padding:10px 14px;font-size:13px;font-weight:700;color:#374151;
+      font-family:'Courier New',monospace;margin:8px 0;letter-spacing:.01em;
+    }
+    .video-link{
+      display:inline-flex;align-items:center;gap:8px;margin-top:14px;
+      padding:9px 16px;border-radius:var(--radius-xs);background:#fee2e2;
+      color:#991b1b;font-weight:700;font-size:13px;text-decoration:none;
+      border:1px solid #fecaca;transition:all .15s ease;
+    }
+    .video-link:hover{background:#fecaca;border-color:#fca5a5}
+
+    /* Irregular verbs table */
+    .verb-search{margin-bottom:14px}
+    .verb-table{width:100%;border-collapse:collapse;font-size:13px}
+    .verb-table th{
+      background:var(--bg);border:1px solid var(--line);
+      padding:10px 12px;font-weight:700;font-size:12px;
+      color:var(--muted);text-transform:uppercase;letter-spacing:.04em;
+      text-align:left;
+    }
+    .verb-table td{
+      border:1px solid var(--line);padding:9px 12px;
+      transition:background .1s ease;
+    }
+    .verb-table tr:hover td{background:#f8fbff}
+    .verb-table .v1{font-weight:700;color:var(--text)}
+    .verb-table .v2{color:#2563eb;font-weight:600}
+    .verb-table .v3{color:#059669;font-weight:600}
+    .verb-table .vtrans{color:var(--muted)}
+    .verb-group-header td{
+      background:var(--primary-soft);color:var(--primary-text);
+      font-weight:800;font-size:12px;letter-spacing:.04em;text-transform:uppercase;
+    }
+    .table-wrapper{overflow-x:auto;border-radius:var(--radius-sm);border:1px solid var(--line)}
+
+    @keyframes fadeSlide{
+      from{opacity:0;transform:translateY(5px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+    @media(max-width:980px){
+      .container{padding:12px}
+      .dashboard-grid,.grid-3,.kpis,.two-col{grid-template-columns:1fr}
+      .grid-2,.grid-2-equal{grid-template-columns:1fr}
+      h1{font-size:24px}
+      .tabs{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+      .tabs::-webkit-scrollbar{display:none}
+      .tab{padding:8px 13px;white-space:nowrap}
+      .grammar-grid{grid-template-columns:1fr}
+      .grammar-nav{flex-direction:row;flex-wrap:wrap}
+    }
+    @media(prefers-reduced-motion:reduce){
+      *,*::before,*::after{animation:none !important;transition:none !important}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap">
+        <div>
+          <h1>English Learning System</h1>
+          <div class="hero-muted">Дашборд, трекер прогресса, бизнес-словарь с озвучкой, грамматика, неправильные глаголы, темы для speaking и экспорт данных.</div>
+        </div>
+        <div class="badges">
+          <span class="badge">B1 → B2</span>
+          <span class="badge">60 мин/день</span>
+          <span class="badge">Business English</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="tabs" id="tabs"></div>
+
+    <section id="dashboard" class="tab-pane active"></section>
+    <section id="tracker" class="tab-pane"></section>
+    <section id="dictionary" class="tab-pane"></section>
+    <section id="review" class="tab-pane"></section>
+    <section id="topics" class="tab-pane"></section>
+    <section id="grammar" class="tab-pane"></section>
+    <section id="resources" class="tab-pane"></section>
+  </div>
+
+<script>
+const STORAGE_KEYS = {
+  settings: 'eng_plus_settings_v3',
+  tracker:  'eng_plus_tracker_v3',
+  dictionary:'eng_plus_dictionary_v3',
+  topics:   'eng_plus_topics_v3',
+};
+
+const defaultSettings = {
+  weeklyWordsGoal: 70,
+  weeklySpeakingGoal: 120,
+  weeklyListeningGoal: 5,
+};
+
+const starterWords = [
+  { word:"schedule", translation:"расписание; планировать", phonetic:"/ˈskedʒuːl/", pronounce:"скэ́джул", example:"Let's schedule a meeting for tomorrow.", exampleTranslation:"Давай запланируем встречу на завтра.", category:"Работа", source:"базовый", status:"новое", reviewToday:false },
+  { word:"deadline", translation:"крайний срок", phonetic:"/ˈdedlaɪn/", pronounce:"де́длайн", example:"We need to meet the deadline.", exampleTranslation:"Нам нужно уложиться в крайний срок.", category:"Работа", source:"базовый", status:"новое", reviewToday:false },
+  { word:"follow up", translation:"уточнить позже; вернуться к вопросу", phonetic:"/ˈfɑːloʊ ʌp/", pronounce:"фа́лоу ап", example:"I will follow up by email.", exampleTranslation:"Я уточню это позже по электронной почте.", category:"Работа", source:"базовый", status:"новое", reviewToday:false },
+  { word:"issue", translation:"вопрос; проблема", phonetic:"/ˈɪʃuː/", pronounce:"и́шью", example:"There is an issue with the shipment.", exampleTranslation:"С отгрузкой возникла проблема.", category:"Бизнес", source:"базовый", status:"новое", reviewToday:false },
+  { word:"shipment", translation:"отгрузка", phonetic:"/ˈʃɪpmənt/", pronounce:"ши́пмэнт", example:"The shipment will arrive next week.", exampleTranslation:"Отгрузка прибудет на следующей неделе.", category:"Бизнес", source:"базовый", status:"новое", reviewToday:false },
+  { word:"supplier", translation:"поставщик", phonetic:"/səˈplaɪər/", pronounce:"сэпа́йер", example:"We are looking for a reliable supplier.", exampleTranslation:"Мы ищем надёжного поставщика.", category:"Бизнес", source:"базовый", status:"новое", reviewToday:false },
+  { word:"customer", translation:"клиент", phonetic:"/ˈkʌstəmər/", pronounce:"ка́стэмер", example:"The customer requested a discount.", exampleTranslation:"Клиент запросил скидку.", category:"Бизнес", source:"базовый", status:"новое", reviewToday:false },
+  { word:"agreement", translation:"соглашение", phonetic:"/əˈɡriːmənt/", pronounce:"эгри́мэнт", example:"We signed the agreement yesterday.", exampleTranslation:"Мы подписали соглашение вчера.", category:"Бизнес", source:"базовый", status:"новое", reviewToday:false },
+  { word:"negotiate", translation:"вести переговоры", phonetic:"/nɪˈɡoʊʃieɪt/", pronounce:"ниго́ушиэйт", example:"We need to negotiate the price.", exampleTranslation:"Нам нужно обсудить цену на переговорах.", category:"Переговоры", source:"базовый", status:"новое", reviewToday:false },
+  { word:"clarify", translation:"уточнять", phonetic:"/ˈklærəfaɪ/", pronounce:"клэ́рифай", example:"Could you clarify this point?", exampleTranslation:"Не могли бы вы уточнить этот момент?", category:"Переговоры", source:"базовый", status:"новое", reviewToday:false },
+  { word:"quotation", translation:"коммерческое предложение; котировка", phonetic:"/kwoʊˈteɪʃn/", pronounce:"квоутэ́йшн", example:"Please send us your quotation by Friday.", exampleTranslation:"Пожалуйста, отправьте нам своё коммерческое предложение до пятницы.", category:"Бизнес-словарь", source:"business", status:"новое", reviewToday:false },
+  { word:"purchase order", translation:"заказ на покупку", phonetic:"/ˈpɜːrtʃəs ˌɔːrdər/", pronounce:"пёрчэс о́рдэр", example:"We received your purchase order this morning.", exampleTranslation:"Мы получили ваш заказ на покупку сегодня утром.", category:"Бизнес-словарь", source:"business", status:"новое", reviewToday:false },
+  { word:"invoice", translation:"счёт", phonetic:"/ˈɪnvɔɪs/", pronounce:"и́нвойс", example:"The invoice will be issued after confirmation.", exampleTranslation:"Счёт будет выставлен после подтверждения.", category:"Финансы", source:"business", status:"новое", reviewToday:false },
+  { word:"payment terms", translation:"условия оплаты", phonetic:"/ˈpeɪmənt tɜːrmz/", pronounce:"пэ́ймэнт тёрмз", example:"We need to discuss the payment terms.", exampleTranslation:"Нам нужно обсудить условия оплаты.", category:"Финансы", source:"business", status:"новое", reviewToday:false },
+  { word:"lead time", translation:"срок выполнения / срок поставки", phonetic:"/ˈliːd taɪm/", pronounce:"ли́д тайм", example:"Our standard lead time is three weeks.", exampleTranslation:"Наш стандартный срок поставки — три недели.", category:"Логистика", source:"business", status:"новое", reviewToday:false },
+  { word:"delivery terms", translation:"условия поставки", phonetic:"/dɪˈlɪvəri tɜːrmz/", pronounce:"дили́вери тёрмз", example:"Let's clarify the delivery terms.", exampleTranslation:"Давайте уточним условия поставки.", category:"Логистика", source:"business", status:"новое", reviewToday:false },
+  { word:"incoterms", translation:"Инкотермс", phonetic:"/ˈɪŋkoʊtɜːrmz/", pronounce:"и́нкоутёрмз", example:"The contract is based on FOB Incoterms.", exampleTranslation:"Контракт основан на условиях FOB по Инкотермс.", category:"Логистика", source:"business", status:"новое", reviewToday:false },
+  { word:"contract", translation:"контракт", phonetic:"/ˈkɑːntrækt/", pronounce:"ка́нтрэкт", example:"We are reviewing the contract now.", exampleTranslation:"Сейчас мы изучаем контракт.", category:"Документы", source:"business", status:"новое", reviewToday:false },
+  { word:"specification", translation:"спецификация", phonetic:"/ˌspesɪfɪˈkeɪʃn/", pronounce:"спэсэфикэ́йшн", example:"Please check the product specification carefully.", exampleTranslation:"Пожалуйста, внимательно проверьте спецификацию продукта.", category:"Документы", source:"business", status:"новое", reviewToday:false },
+  { word:"sample", translation:"образец", phonetic:"/ˈsæmpl/", pronounce:"сэ́мпл", example:"We can send you a sample before mass production.", exampleTranslation:"Мы можем отправить вам образец до массового производства.", category:"Продажи", source:"business", status:"новое", reviewToday:false },
+  { word:"discount", translation:"скидка", phonetic:"/ˈdɪskaʊnt/", pronounce:"ди́скаунт", example:"What discount can you offer for this volume?", exampleTranslation:"Какую скидку вы можете предложить на этот объём?", category:"Продажи", source:"business", status:"новое", reviewToday:false },
+  { word:"margin", translation:"маржа", phonetic:"/ˈmɑːrdʒɪn/", pronounce:"ма́рджин", example:"We need to protect our margin.", exampleTranslation:"Нам нужно сохранить нашу маржу.", category:"Финансы", source:"business", status:"новое", reviewToday:false },
+  { word:"distributor", translation:"дистрибьютор", phonetic:"/dɪˈstrɪbjətər/", pronounce:"дистри́бьютэр", example:"We need an exclusive distributor for this region.", exampleTranslation:"Нам нужен эксклюзивный дистрибьютор для этого региона.", category:"Продажи", source:"business", status:"новое", reviewToday:false },
+  { word:"revenue", translation:"выручка", phonetic:"/ˈrevənuː/", pronounce:"рэ́вэнью", example:"Revenue grew significantly last year.", exampleTranslation:"Выручка значительно выросла в прошлом году.", category:"Финансы", source:"business", status:"новое", reviewToday:false },
+  { word:"counteroffer", translation:"встречное предложение", phonetic:"/ˈkaʊntərˌɔːfər/", pronounce:"ка́унтэр-о́фэр", example:"They made a counteroffer yesterday.", exampleTranslation:"Они сделали встречное предложение вчера.", category:"Переговоры", source:"business", status:"новое", reviewToday:false },
+  { word:"point of contact", translation:"контактное лицо", phonetic:"/pɔɪnt əv ˈkɑːntækt/", pronounce:"пойнт эв ка́нтэкт", example:"Who will be our main point of contact?", exampleTranslation:"Кто будет нашим основным контактным лицом?", category:"Коммуникация", source:"business", status:"новое", reviewToday:false },
+  { word:"customs clearance", translation:"таможенное оформление", phonetic:"/ˈkʌstəmz ˈklɪrəns/", pronounce:"ка́стэмз кли́рэнс", example:"Customs clearance may take several days.", exampleTranslation:"Таможенное оформление может занять несколько дней.", category:"Логистика", source:"business", status:"новое", reviewToday:false },
+  { word:"competitive advantage", translation:"конкурентное преимущество", phonetic:"/kəmˈpetətɪv ədˈvæntɪdʒ/", pronounce:"кэмпе́титив эдва́нтидж", example:"Price is not our only competitive advantage.", exampleTranslation:"Цена — не единственное наше конкурентное преимущество.", category:"Стратегия", source:"business", status:"новое", reviewToday:false },
+];
+
+const defaultTopics = [
+  { title:"Представить свою компанию за 2 минуты", text:"Hello, my name is Evgenii. I work in international business development. Our company produces household chemicals, including soap, laundry detergents, dishwashing liquids, and cleaning products. We are currently expanding our export business and looking for reliable partners in new markets.", translation:"Здравствуйте, меня зовут Евгений. Я работаю в сфере международного развития бизнеса. Наша компания производит бытовую химию, включая мыло, стиральные средства, жидкости для мытья посуды и чистящие средства. Сейчас мы расширяем экспортное направление и ищем надёжных партнёров на новых рынках." },
+  { title:"Обсудить цену и условия поставки", text:"Thank you for your interest in our products. The current price is based on FOB terms. If you need CIF pricing, we can prepare a separate quotation. Our standard lead time is three weeks after payment confirmation.", translation:"Спасибо за интерес к нашей продукции. Текущая цена указана на условиях FOB. Если вам нужна цена на условиях CIF, мы можем подготовить отдельное коммерческое предложение. Наш стандартный срок поставки составляет три недели после подтверждения оплаты." },
+  { title:"Ответить на возражение клиента по цене", text:"I understand your concern about the price. However, our offer includes stable quality, reliable supply, and export support. We are ready to discuss volume-based discounts if your order quantity increases.", translation:"Я понимаю ваше беспокойство по поводу цены. Однако наше предложение включает стабильное качество, надёжные поставки и экспортную поддержку. Мы готовы обсудить скидки в зависимости от объёма, если количество заказа увеличится." },
+  { title:"Обсудить экспорт в Китай и логистику", text:"For the Chinese market, we need to pay special attention to labeling, registration requirements, and customs clearance. We can support the partner with documents, HS codes, and product specifications.", translation:"Для китайского рынка нам нужно уделить особое внимание маркировке, требованиям регистрации и таможенному оформлению. Мы можем помочь партнёру с документами, HS кодами и спецификациями продукции." },
+  { title:"Согласовать следующие шаги после переговоров", text:"Thank you for the productive discussion. As the next step, we will send you the updated quotation, product specifications, and sample information. Please review the documents, and we can schedule another call next week.", translation:"Спасибо за продуктивное обсуждение. Следующим шагом мы отправим вам обновлённое коммерческое предложение, спецификации продукции и информацию по образцам. Пожалуйста, изучите документы, и мы сможем назначить ещё один звонок на следующей неделе." }
+];
+
+const resourceLinks = [
+  { category:"Аудирование", title:"VOA Learning English", url:"https://learningenglish.voanews.com" },
+  { category:"Аудирование", title:"ELLLO", url:"https://elllo.org" },
+  { category:"Произношение", title:"YouGlish", url:"https://youglish.com" },
+  { category:"Карточки", title:"Anki", url:"https://apps.ankiweb.net" },
+  { category:"Карточки", title:"Quizlet", url:"https://quizlet.com" },
+  { category:"Разговор", title:"ELSA Speak", url:"https://elsaspeak.com" },
+  { category:"Разговор", title:"Speak", url:"https://speak.com" },
+  { category:"Общение", title:"Tandem", url:"https://www.tandem.net" }
+];
+
+// ─── Grammar data ──────────────────────────────────────────────
+const grammarData = [
+  {
+    id:'present-simple',
+    category:'Времена',
+    title:'Present Simple',
+    content:`<div class="rule-block">
+      <h4>Когда используется</h4>
+      <p>Регулярные действия и привычки, факты, расписания и постоянные ситуации.</p>
+      <div class="rule-formula">I/You/We/They + V1 &nbsp;|&nbsp; He/She/It + V1+s/es</div>
+      <div class="rule-example">
+        <em>We ship products every month.</em> — Мы отгружаем продукцию каждый месяц.<br>
+        <em>The meeting starts at 10 AM.</em> — Совещание начинается в 10 утра.<br>
+        <em>He always follows up by email.</em> — Он всегда уточняет по электронной почте.
+      </div>
+    </div>
+    <div class="rule-block">
+      <h4>Отрицание и вопрос</h4>
+      <div class="rule-formula">don't / doesn't + V1 &nbsp;|&nbsp; Do/Does + S + V1?</div>
+      <div class="rule-example">
+        <em>We don't offer discounts on small orders.</em><br>
+        <em>Does the supplier accept PayPal?</em>
+      </div>
+    </div>
+    <a class="video-link" href="https://www.youtube.com/watch?v=1Frc7AqHW3s" target="_blank" rel="noreferrer">▶ Видео: Present Simple (Englisch Lernen)</a>`
+  },
+  {
+    id:'present-continuous',
+    category:'Времена',
+    title:'Present Continuous',
+    content:`<div class="rule-block">
+      <h4>Когда используется</h4>
+      <p>Действие происходит прямо сейчас или временная ситуация в данный период. Также — запланированные договорённости в будущем.</p>
+      <div class="rule-formula">am / is / are + V-ing</div>
+      <div class="rule-example">
+        <em>We are currently negotiating the contract.</em> — Сейчас мы ведём переговоры по контракту.<br>
+        <em>I am meeting the client tomorrow.</em> — Завтра я встречаюсь с клиентом.<br>
+        <em>The price is increasing every month.</em> — Цена растёт каждый месяц.
+      </div>
+    </div>
+    <div class="rule-block">
+      <h4>Stative verbs — глаголы без Continuous</h4>
+      <p>know, understand, believe, want, need, like, love, hate, see, hear — не используются в форме -ing.</p>
+      <div class="rule-example">
+        ✗ <em>I am knowing the answer.</em><br>
+        ✓ <em>I know the answer.</em>
+      </div>
+    </div>
+    <a class="video-link" href="https://www.youtube.com/watch?v=WlN4KeFHfzI" target="_blank" rel="noreferrer">▶ Видео: Present Continuous</a>`
+  },
+  {
+    id:'past-simple',
+    category:'Времена',
+    title:'Past Simple',
+    content:`<div class="rule-block">
+      <h4>Когда используется</h4>
+      <p>Завершённое действие в прошлом. Конкретный момент или период: yesterday, last week, in 2020, ago.</p>
+      <div class="rule-formula">V2 (правильные: +ed) &nbsp;|&nbsp; didn't + V1</div>
+      <div class="rule-example">
+        <em>We signed the contract last week.</em> — Мы подписали контракт на прошлой неделе.<br>
+        <em>They didn't confirm the order.</em> — Они не подтвердили заказ.<br>
+        <em>The client sent the payment yesterday.</em> — Клиент отправил оплату вчера.
+      </div>
+    </div>
+    <a class="video-link" href="https://www.youtube.com/watch?v=NqVNEpTM1sg" target="_blank" rel="noreferrer">▶ Видео: Past Simple</a>`
+  },
+  {
+    id:'present-perfect',
+    category:'Времена',
+    title:'Present Perfect',
+    content:`<div class="rule-block">
+      <h4>Когда используется</h4>
+      <p>Действие в прошлом, но результат важен сейчас. Часто с: already, yet, just, ever, never, since, for.</p>
+      <div class="rule-formula">have / has + V3 (Past Participle)</div>
+      <div class="rule-example">
+        <em>We have already sent the invoice.</em> — Мы уже отправили счёт.<br>
+        <em>Have you received our quotation?</em> — Вы получили наше коммерческое предложение?<br>
+        <em>The company has expanded to 15 markets.</em> — Компания расширилась до 15 рынков.
+      </div>
+    </div>
+    <div class="rule-block">
+      <h4>Present Perfect vs Past Simple</h4>
+      <div class="rule-example">
+        <em>I have sent the email.</em> (результат важен, время не указано)<br>
+        <em>I sent the email at 9 AM.</em> (конкретное время → Past Simple)
+      </div>
+    </div>
+    <a class="video-link" href="https://www.youtube.com/watch?v=AXXRc5wfM-E" target="_blank" rel="noreferrer">▶ Видео: Present Perfect</a>`
+  },
+  {
+    id:'future',
+    category:'Времена',
+    title:'Будущее время (will / going to)',
+    content:`<div class="rule-block">
+      <h4>will — спонтанное решение, обещание, прогноз</h4>
+      <div class="rule-formula">will + V1</div>
+      <div class="rule-example">
+        <em>I will send you the documents right now.</em> — Я пришлю вам документы прямо сейчас.<br>
+        <em>The price will increase next quarter.</em> — Цена вырастет в следующем квартале.
+      </div>
+    </div>
+    <div class="rule-block">
+      <h4>going to — заранее запланированное действие</h4>
+      <div class="rule-formula">am/is/are + going to + V1</div>
+      <div class="rule-example">
+        <em>We are going to launch a new product next month.</em> — Мы собираемся выпустить новый продукт в следующем месяце.<br>
+        <em>They are going to visit our factory in June.</em> — Они собираются посетить наш завод в июне.
+      </div>
+    </div>
+    <a class="video-link" href="https://www.youtube.com/watch?v=2O4aGx_mHiA" target="_blank" rel="noreferrer">▶ Видео: Will vs Going To</a>`
+  },
+  {
+    id:'modals',
+    category:'Модальные глаголы',
+    title:'Can / Could / May',
+    content:`<div class="rule-block">
+      <h4>can — умение, возможность (настоящее)</h4>
+      <div class="rule-example">
+        <em>We can deliver within two weeks.</em> — Мы можем доставить в течение двух недель.<br>
+        <em>Can you send the specification?</em> — Вы можете прислать спецификацию?
+      </div>
+    </div>
+    <div class="rule-block">
+      <h4>could — вежливая просьба, возможность в прошлом</h4>
+      <div class="rule-example">
+        <em>Could you please clarify the delivery terms?</em> — Не могли бы вы уточнить условия поставки?<br>
+        <em>We could offer a 5% discount last year.</em> — В прошлом году мы могли предложить скидку 5%.
+      </div>
+    </div>
+    <div class="rule-block">
+      <h4>may — разрешение, вежливое предположение</h4>
+      <div class="rule-example">
+        <em>May I ask about your payment terms?</em> — Могу я уточнить ваши условия оплаты?<br>
+        <em>The shipment may be delayed.</em> — Отгрузка может задержаться.
+      </div>
+    </div>
+    <a class="video-link" href="https://www.youtube.com/watch?v=3jLiyAMCVw0" target="_blank" rel="noreferrer">▶ Видео: Modal Verbs</a>`
+  },
+  {
+    id:'must-should',
+    category:'Модальные глаголы',
+    title:'Must / Should / Have to',
+    content:`<div class="rule-block">
+      <h4>must — строгая обязанность, уверенный вывод</h4>
+      <div class="rule-example">
+        <em>All documents must be signed before shipment.</em> — Все документы должны быть подписаны до отгрузки.<br>
+        <em>You must be joking — the price is too low.</em> — Вы должно быть шутите — цена слишком низкая.
+      </div>
+    </div>
+    <div class="rule-block">
+      <h4>should — совет, рекомендация</h4>
+      <div class="rule-example">
+        <em>You should confirm the order in writing.</em> — Вам следует подтвердить заказ письменно.<br>
+        <em>We should discuss this in the next meeting.</em> — Нам стоит обсудить это на следующей встрече.
+      </div>
+    </div>
+    <div class="rule-block">
+      <h4>have to — внешняя обязанность (правила, закон)</h4>
+      <div class="rule-example">
+        <em>We have to comply with customs regulations.</em> — Мы обязаны соблюдать таможенные правила.
+      </div>
+    </div>
+    <a class="video-link" href="https://www.youtube.com/watch?v=E7Kk_P_Rmes" target="_blank" rel="noreferrer">▶ Видео: Must / Should / Have to</a>`
+  },
+  {
+    id:'conditionals',
+    category:'Условные предложения',
+    title:'Conditionals (0, 1, 2)',
+    content:`<div class="rule-block">
+      <h4>Zero Conditional — факты и общие истины</h4>
+      <div class="rule-formula">If + Present Simple, Present Simple</div>
+      <div class="rule-example">
+        <em>If you heat water to 100°C, it boils.</em><br>
+        <em>If the payment is late, we charge a fee.</em> — Если оплата задерживается, мы взимаем комиссию.
+      </div>
+    </div>
+    <div class="rule-block">
+      <h4>First Conditional — реальная ситуация в будущем</h4>
+      <div class="rule-formula">If + Present Simple, will + V1</div>
+      <div class="rule-example">
+        <em>If you order 500 units, we will give a 10% discount.</em><br>
+        <em>If the client confirms today, we will ship next week.</em>
+      </div>
+    </div>
+    <div class="rule-block">
+      <h4>Second Conditional — нереальная / маловероятная ситуация</h4>
+      <div class="rule-formula">If + Past Simple, would + V1</div>
+      <div class="rule-example">
+        <em>If we had a local warehouse, delivery would be faster.</em><br>
+        <em>If I were the supplier, I would offer better terms.</em>
+      </div>
+    </div>
+    <a class="video-link" href="https://www.youtube.com/watch?v=GxEizMBQWfg" target="_blank" rel="noreferrer">▶ Видео: Conditionals 0, 1, 2</a>`
+  },
+  {
+    id:'passive',
+    category:'Структуры',
+    title:'Passive Voice (Пассивный залог)',
+    content:`<div class="rule-block">
+      <h4>Когда использовать</h4>
+      <p>Когда важен результат или объект действия, а не тот, кто его совершает. В бизнес-письмах и официальных текстах пассив используется очень часто.</p>
+      <div class="rule-formula">am / is / are / was / were + V3</div>
+      <div class="rule-example">
+        <em>The invoice was sent on Monday.</em> — Счёт был отправлен в понедельник.<br>
+        <em>The contract has been signed.</em> — Контракт подписан.<br>
+        <em>Payments are processed within 3 days.</em> — Платежи обрабатываются в течение 3 дней.<br>
+        <em>The goods will be shipped next week.</em> — Товар будет отгружен на следующей неделе.
+      </div>
+    </div>
+    <a class="video-link" href="https://www.youtube.com/watch?v=vA7vsbkzxmE" target="_blank" rel="noreferrer">▶ Видео: Passive Voice</a>`
+  },
+  {
+    id:'articles',
+    category:'Структуры',
+    title:'Артикли a / an / the',
+    content:`<div class="rule-block">
+      <h4>a / an — неопределённый артикль</h4>
+      <p>Первое упоминание, один из многих, любой представитель класса.</p>
+      <div class="rule-example">
+        <em>We need a reliable supplier.</em> — Нам нужен (какой-нибудь) надёжный поставщик.<br>
+        <em>She sent an invoice.</em> — Она отправила счёт (один из возможных).
+      </div>
+    </div>
+    <div class="rule-block">
+      <h4>the — определённый артикль</h4>
+      <p>Конкретный предмет, о котором уже знают оба собеседника, уникальный объект.</p>
+      <div class="rule-example">
+        <em>Did you receive the invoice I sent?</em> — Вы получили тот счёт, что я отправил?<br>
+        <em>The price is based on FOB terms.</em> — Цена (конкретная, о которой говорим) основана на FOB.
+      </div>
+    </div>
+    <div class="rule-block">
+      <h4>Без артикля</h4>
+      <p>Несчисляемые существительные в общем смысле, имена собственные, страны (кроме The USA, The UK), языки.</p>
+      <div class="rule-example">
+        <em>We export soap to China.</em><br>
+        <em>Business is about relationships.</em>
+      </div>
+    </div>
+    <a class="video-link" href="https://www.youtube.com/watch?v=a3_lQFBjcoE" target="_blank" rel="noreferrer">▶ Видео: Articles A/An/The</a>`
+  },
+  {
+    id:'prepositions',
+    category:'Структуры',
+    title:'Предлоги времени и места',
+    content:`<div class="rule-block">
+      <h4>Предлоги времени: in / on / at</h4>
+      <div class="rule-formula">at — точное время: at 10 AM, at noon, at the end of the month</div>
+      <div class="rule-formula">on — день или дата: on Monday, on June 5th</div>
+      <div class="rule-formula">in — период: in March, in 2024, in the morning, in Q3</div>
+      <div class="rule-example">
+        <em>The meeting is at 3 PM on Friday in June.</em><br>
+        <em>We will deliver in two weeks.</em> — Мы доставим через две недели.<br>
+        <em>Payment is due on the 30th of the month.</em>
+      </div>
+    </div>
+    <div class="rule-block">
+      <h4>Бизнес-предлоги</h4>
+      <div class="rule-example">
+        <em>by email / by phone</em> — по электронной почте / по телефону<br>
+        <em>in writing</em> — в письменном виде<br>
+        <em>on behalf of</em> — от имени<br>
+        <em>in accordance with</em> — в соответствии с<br>
+        <em>prior to / ahead of</em> — до, перед
+      </div>
+    </div>
+    <a class="video-link" href="https://www.youtube.com/watch?v=9nMPcFE6FMI" target="_blank" rel="noreferrer">▶ Видео: Prepositions of Time</a>`
+  },
+  {
+    id:'questions',
+    category:'Структуры',
+    title:'Вопросы: построение',
+    content:`<div class="rule-block">
+      <h4>General questions (Yes/No)</h4>
+      <div class="rule-formula">Aux verb + Subject + V1?</div>
+      <div class="rule-example">
+        <em>Have you received our quotation?</em><br>
+        <em>Can you confirm the delivery date?</em><br>
+        <em>Does your company offer credit terms?</em>
+      </div>
+    </div>
+    <div class="rule-block">
+      <h4>Special questions (Wh-)</h4>
+      <div class="rule-formula">Wh-word + Aux + Subject + V1?</div>
+      <div class="rule-example">
+        <em>What are your payment terms?</em><br>
+        <em>When can you ship the order?</em><br>
+        <em>How much does the sample cost?</em><br>
+        <em>Who is the point of contact?</em>
+      </div>
+    </div>
+    <div class="rule-block">
+      <h4>Косвенные вопросы (вежливо)</h4>
+      <p>В деловом общении часто используют косвенные вопросы — они звучат мягче.</p>
+      <div class="rule-example">
+        <em>Could you tell me what the lead time is?</em><br>
+        <em>I was wondering if you could send a sample.</em>
+      </div>
+    </div>
+    <a class="video-link" href="https://www.youtube.com/watch?v=VfB7GRMYOLU" target="_blank" rel="noreferrer">▶ Видео: Question Formation</a>`
+  },
+];
+
+// ─── Irregular verbs ─────────────────────────────────────────
+const irregularVerbs = [
+  { v1:"be", v2:"was/were", v3:"been", tr:"быть" },
+  { v1:"bear", v2:"bore", v3:"born/borne", tr:"нести; родить" },
+  { v1:"beat", v2:"beat", v3:"beaten", tr:"бить; побеждать" },
+  { v1:"become", v2:"became", v3:"become", tr:"становиться" },
+  { v1:"begin", v2:"began", v3:"begun", tr:"начинать" },
+  { v1:"bend", v2:"bent", v3:"bent", tr:"гнуть" },
+  { v1:"bind", v2:"bound", v3:"bound", tr:"связывать" },
+  { v1:"bite", v2:"bit", v3:"bitten", tr:"кусать" },
+  { v1:"blow", v2:"blew", v3:"blown", tr:"дуть" },
+  { v1:"break", v2:"broke", v3:"broken", tr:"ломать" },
+  { v1:"bring", v2:"brought", v3:"brought", tr:"приносить" },
+  { v1:"build", v2:"built", v3:"built", tr:"строить" },
+  { v1:"buy", v2:"bought", v3:"bought", tr:"покупать" },
+  { v1:"catch", v2:"caught", v3:"caught", tr:"ловить" },
+  { v1:"choose", v2:"chose", v3:"chosen", tr:"выбирать" },
+  { v1:"come", v2:"came", v3:"come", tr:"приходить" },
+  { v1:"cost", v2:"cost", v3:"cost", tr:"стоить" },
+  { v1:"cut", v2:"cut", v3:"cut", tr:"резать" },
+  { v1:"deal", v2:"dealt", v3:"dealt", tr:"иметь дело; торговать" },
+  { v1:"do", v2:"did", v3:"done", tr:"делать" },
+  { v1:"draw", v2:"drew", v3:"drawn", tr:"рисовать; тянуть" },
+  { v1:"drink", v2:"drank", v3:"drunk", tr:"пить" },
+  { v1:"drive", v2:"drove", v3:"driven", tr:"вести; ехать" },
+  { v1:"eat", v2:"ate", v3:"eaten", tr:"есть" },
+  { v1:"fall", v2:"fell", v3:"fallen", tr:"падать" },
+  { v1:"feel", v2:"felt", v3:"felt", tr:"чувствовать" },
+  { v1:"find", v2:"found", v3:"found", tr:"находить" },
+  { v1:"fly", v2:"flew", v3:"flown", tr:"летать" },
+  { v1:"forget", v2:"forgot", v3:"forgotten", tr:"забывать" },
+  { v1:"get", v2:"got", v3:"got/gotten", tr:"получать; становиться" },
+  { v1:"give", v2:"gave", v3:"given", tr:"давать" },
+  { v1:"go", v2:"went", v3:"gone", tr:"идти; ехать" },
+  { v1:"grow", v2:"grew", v3:"grown", tr:"расти; выращивать" },
+  { v1:"have", v2:"had", v3:"had", tr:"иметь" },
+  { v1:"hear", v2:"heard", v3:"heard", tr:"слышать" },
+  { v1:"hold", v2:"held", v3:"held", tr:"держать; проводить" },
+  { v1:"hurt", v2:"hurt", v3:"hurt", tr:"причинять боль" },
+  { v1:"keep", v2:"kept", v3:"kept", tr:"держать; хранить" },
+  { v1:"know", v2:"knew", v3:"known", tr:"знать" },
+  { v1:"lay", v2:"laid", v3:"laid", tr:"класть" },
+  { v1:"lead", v2:"led", v3:"led", tr:"вести; руководить" },
+  { v1:"leave", v2:"left", v3:"left", tr:"уходить; оставлять" },
+  { v1:"lend", v2:"lent", v3:"lent", tr:"одалживать" },
+  { v1:"let", v2:"let", v3:"let", tr:"позволять; сдавать" },
+  { v1:"lie", v2:"lay", v3:"lain", tr:"лежать" },
+  { v1:"lose", v2:"lost", v3:"lost", tr:"терять; проигрывать" },
+  { v1:"make", v2:"made", v3:"made", tr:"делать; производить" },
+  { v1:"mean", v2:"meant", v3:"meant", tr:"означать; подразумевать" },
+  { v1:"meet", v2:"met", v3:"met", tr:"встречать" },
+  { v1:"pay", v2:"paid", v3:"paid", tr:"платить" },
+  { v1:"put", v2:"put", v3:"put", tr:"класть" },
+  { v1:"read", v2:"read", v3:"read", tr:"читать" },
+  { v1:"run", v2:"ran", v3:"run", tr:"бежать; управлять" },
+  { v1:"say", v2:"said", v3:"said", tr:"говорить; сказать" },
+  { v1:"see", v2:"saw", v3:"seen", tr:"видеть" },
+  { v1:"sell", v2:"sold", v3:"sold", tr:"продавать" },
+  { v1:"send", v2:"sent", v3:"sent", tr:"отправлять" },
+  { v1:"set", v2:"set", v3:"set", tr:"устанавливать; задавать" },
+  { v1:"show", v2:"showed", v3:"shown", tr:"показывать" },
+  { v1:"shut", v2:"shut", v3:"shut", tr:"закрывать" },
+  { v1:"sign", v2:"signed", v3:"signed", tr:"подписывать (правильный)" },
+  { v1:"sit", v2:"sat", v3:"sat", tr:"сидеть" },
+  { v1:"speak", v2:"spoke", v3:"spoken", tr:"говорить" },
+  { v1:"spend", v2:"spent", v3:"spent", tr:"тратить" },
+  { v1:"stand", v2:"stood", v3:"stood", tr:"стоять" },
+  { v1:"take", v2:"took", v3:"taken", tr:"брать; занимать (время)" },
+  { v1:"teach", v2:"taught", v3:"taught", tr:"учить" },
+  { v1:"tell", v2:"told", v3:"told", tr:"говорить; рассказывать" },
+  { v1:"think", v2:"thought", v3:"thought", tr:"думать" },
+  { v1:"understand", v2:"understood", v3:"understood", tr:"понимать" },
+  { v1:"win", v2:"won", v3:"won", tr:"побеждать; выигрывать" },
+  { v1:"write", v2:"wrote", v3:"written", tr:"писать" },
+];
+
+const state = {
+  activeTab: 'dashboard',
+  settings: load(STORAGE_KEYS.settings, defaultSettings),
+  tracker: load(STORAGE_KEYS.tracker, []),
+  dictionary: normalizeDictionary(load(STORAGE_KEYS.dictionary, starterWords)),
+  topics: normalizeTopics(load(STORAGE_KEYS.topics, defaultTopics)),
+  entry: { date: todayISO(), wordsLearned: 10, speakingMinutes: 20, listeningDone: true, notes: '' },
+  newWord: { word:'', translation:'', phonetic:'', pronounce:'', example:'', exampleTranslation:'', category:'Мои слова', source:'пользователь', status:'новое', reviewToday:false },
+  newTopic: { title:'', text:'', translation:'' },
+  search: '',
+  statusFilter: 'все',
+  categoryFilter: 'все',
+  flashIndex: 0,
+  showAnswer: false,
+  copied: '',
+  activeGrammar: 'present-simple',
+  verbSearch: '',
+};
+
+const tabs = [
+  ['dashboard','Дашборд'],
+  ['tracker','Трекер'],
+  ['dictionary','Словарь'],
+  ['review','Повторение'],
+  ['topics','Speaking'],
+  ['grammar','Грамматика'],
+  ['resources','Ресурсы'],
+];
+
+// ─── Helpers ─────────────────────────────────────────────────
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+function load(key, fallback){
+  try{ const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }catch(e){ return fallback; }
+}
+function save(key, value){ localStorage.setItem(key, JSON.stringify(value)); }
+function normalizeDictionary(arr){
+  return arr.map(x => ({ status:'новое', reviewToday:false, addedAt:todayISO(), phonetic:'', pronounce:'', example:'', exampleTranslation:'', ...x }));
+}
+function normalizeTopics(arr){
+  return arr.map(x => typeof x === 'string' ? { title:x, text:'', translation:'' } : { title:'', text:'', translation:'', ...x });
+}
+function weekNumber(dateString){
+  const date = new Date(dateString);
+  const first = new Date(date.getFullYear(),0,1);
+  const past = Math.floor((date - first)/86400000);
+  return Math.ceil((past + first.getDay() + 1)/7);
+}
+function esc(s){
+  return String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function percent(a,b){ return Math.min(100, Math.round((a / Math.max(1,b))*100)); }
+function safeJson(s){ return esc(JSON.stringify(s)); }
+
+// ─── Speech ──────────────────────────────────────────────────
+function getBestVoice(){
+  if(!('speechSynthesis' in window)) return null;
+  const voices = window.speechSynthesis.getVoices() || [];
+  return voices.find(v => /en[-_]?US/i.test(v.lang)) || voices.find(v => /^en/i.test(v.lang)) || voices[0] || null;
+}
+if('speechSynthesis' in window){ window.speechSynthesis.onvoiceschanged = () => {}; }
+
+function speakText(text){
+  if(!text) return;
+  if(!('speechSynthesis' in window)){ alert('В этом браузере озвучка не поддерживается.'); return; }
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US'; u.rate = 0.9;
+  const v = getBestVoice(); if(v) u.voice = v;
+  try{ window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); }
+  catch(e){ alert('Не удалось запустить озвучку.'); }
+}
+function copyText(text){
+  navigator.clipboard.writeText(text).then(() => {
+    state.copied = text.slice(0,40);
+    renderTopics();
+    setTimeout(() => { state.copied = ''; renderTopics(); }, 1400);
+  }).catch(() => {});
+}
+function persist(){
+  save(STORAGE_KEYS.settings, state.settings);
+  save(STORAGE_KEYS.tracker, state.tracker);
+  save(STORAGE_KEYS.dictionary, state.dictionary);
+  save(STORAGE_KEYS.topics, state.topics);
+}
+function exportData(){
+  const blob = new Blob([JSON.stringify({ settings:state.settings, tracker:state.tracker, dictionary:state.dictionary, topics:state.topics }, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'english-learning-backup.json'; a.click();
+  URL.revokeObjectURL(url);
+}
+function importData(input){
+  const file = input.files && input.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const data = JSON.parse(reader.result);
+      state.settings = data.settings || defaultSettings;
+      state.tracker = data.tracker || [];
+      state.dictionary = normalizeDictionary(data.dictionary || starterWords);
+      state.topics = normalizeTopics(data.topics || defaultTopics);
+      persist(); renderAll(); alert('Данные успешно импортированы.');
+    }catch(e){ alert('Не удалось импортировать файл.'); }
+  };
+  reader.readAsText(file);
+}
+
+// ─── Tabs ────────────────────────────────────────────────────
+function setTab(tab){
+  state.activeTab = tab;
+  renderTabs();
+  document.querySelectorAll('.tab-pane').forEach(x => x.classList.remove('active'));
+  document.getElementById(tab).classList.add('active');
+}
+function renderTabs(){
+  document.getElementById('tabs').innerHTML = tabs.map(([id,label]) =>
+    `<button class="tab ${state.activeTab===id?'active':''}" onclick="setTab('${id}')">${label}</button>`
+  ).join('');
+}
+
+// ─── Dashboard ───────────────────────────────────────────────
+function getWeekEntries(){
+  const cw = weekNumber(todayISO());
+  return state.tracker.filter(x => weekNumber(x.date) === cw);
+}
+function metricCard(label, value, goal, progress){
+  return `<div class="card metric">
+    <div class="label">${label}</div>
+    <div class="value">${value}</div>
+    <div class="small-muted">Цель: ${goal}</div>
+    <div class="progress"><div class="bar" style="width:${progress}%"></div></div>
+    <div style="display:flex;justify-content:space-between;margin-top:6px">
+      <span class="small-muted">${progress}%</span>
+      <span class="small-muted">${progress >= 100 ? '✓ Выполнено' : 'В процессе'}</span>
+    </div>
+  </div>`;
+}
+function renderDashboard(){
+  const we = getWeekEntries();
+  const weeklyWords = we.reduce((s,x)=>s+Number(x.wordsLearned||0),0);
+  const weeklySpeaking = we.reduce((s,x)=>s+Number(x.speakingMinutes||0),0);
+  const weeklyListening = we.reduce((s,x)=>s+(x.listeningDone?1:0),0);
+  const newCount = state.dictionary.filter(w=>w.status==='новое').length;
+  const learningCount = state.dictionary.filter(w=>w.status==='учу').length;
+  const knownCount = state.dictionary.filter(w=>w.status==='знаю').length;
+  const reviewCount = state.dictionary.filter(w=>w.reviewToday).length;
+  const byWeek = {};
+  state.tracker.forEach(item => {
+    const w = weekNumber(item.date);
+    if(!byWeek[w]) byWeek[w]={week:w,words:0,speaking:0,listening:0};
+    byWeek[w].words += Number(item.wordsLearned||0);
+    byWeek[w].speaking += Number(item.speakingMinutes||0);
+    byWeek[w].listening += item.listeningDone?1:0;
+  });
+  const summary = Object.values(byWeek).sort((a,b)=>b.week-a.week).slice(0,4);
+  const todayPlan = ['10 мин: карточки на повторение','15 мин: 5–7 слов из словаря с примерами','20 мин: speaking по одной теме','15 мин: аудирование + пересказ'];
+
+  document.getElementById('dashboard').innerHTML = `
+    <div class="dashboard-grid">
+      ${metricCard('Слова за неделю', weeklyWords, state.settings.weeklyWordsGoal, percent(weeklyWords, state.settings.weeklyWordsGoal))}
+      ${metricCard('Speaking за неделю', weeklySpeaking+' мин', state.settings.weeklySpeakingGoal+' мин', percent(weeklySpeaking, state.settings.weeklySpeakingGoal))}
+      ${metricCard('Аудирование', weeklyListening+' дней', state.settings.weeklyListeningGoal+' дней', percent(weeklyListening, state.settings.weeklyListeningGoal))}
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <h3 class="section-title">Цели на неделю</h3>
+        <div style="display:grid;gap:14px">
+          <div><label>Слова в неделю</label><input type="number" value="${state.settings.weeklyWordsGoal}" onchange="updateSetting('weeklyWordsGoal',this.value)"></div>
+          <div><label>Speaking, минут в неделю</label><input type="number" value="${state.settings.weeklySpeakingGoal}" onchange="updateSetting('weeklySpeakingGoal',this.value)"></div>
+          <div><label>Дней аудирования в неделю</label><input type="number" value="${state.settings.weeklyListeningGoal}" onchange="updateSetting('weeklyListeningGoal',this.value)"></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3 class="section-title">Словарь сейчас</h3>
+        <div class="kpis">
+          <div class="mini-box">Новые<strong>${newCount}</strong></div>
+          <div class="mini-box">Учу<strong>${learningCount}</strong></div>
+          <div class="mini-box">Знаю<strong>${knownCount}</strong></div>
+          <div class="mini-box">Сегодня<strong>${reviewCount}</strong></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3 class="section-title">План на сегодня</h3>
+        <div class="list">${todayPlan.map(x=>`<div class="item-card">${x}</div>`).join('')}</div>
+      </div>
+    </div>
+    <div class="grid-2-equal" style="margin-top:16px">
+      <div class="card">
+        <h3 class="section-title">Недельный обзор</h3>
+        <div class="list">
+          ${summary.length ? summary.map(s=>`
+            <div class="item-card">
+              <div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
+                <strong>Неделя ${s.week}</strong>
+                <span class="chip ${s.words>=state.settings.weeklyWordsGoal && s.speaking>=state.settings.weeklySpeakingGoal?'status-known':s.words>=state.settings.weeklyWordsGoal||s.speaking>=state.settings.weeklySpeakingGoal?'status-learning':''}">
+                  ${s.words>=state.settings.weeklyWordsGoal && s.speaking>=state.settings.weeklySpeakingGoal?'Отлично':s.words>=state.settings.weeklyWordsGoal||s.speaking>=state.settings.weeklySpeakingGoal?'Хорошо':'Нужно усилить'}
+                </span>
+              </div>
+              <div class="small-muted" style="margin-top:8px">Слова: <strong>${s.words}</strong> · Speaking: <strong>${s.speaking} мин</strong> · Аудирование: <strong>${s.listening} дн.</strong></div>
+            </div>`).join('') : '<div class="small-muted">Пока нет данных. Добавь первую тренировку в трекер.</div>'}
+        </div>
+      </div>
+      <div class="card">
+        <h3 class="section-title">Резервная копия</h3>
+        <div class="notice">Чтобы не потерять прогресс, экспортируй данные в JSON и позже импортируй их обратно.</div>
+        <div class="button-row">
+          <button class="btn" onclick="exportData()">Экспорт данных</button>
+          <label class="btn secondary" style="cursor:pointer;margin:0">
+            Импорт данных
+            <input type="file" accept="application/json" onchange="importData(this)" style="display:none">
+          </label>
+        </div>
+      </div>
+    </div>`;
+}
+function updateSetting(key, value){
+  state.settings[key] = Number(value||0); persist(); renderDashboard();
+}
+
+// ─── Tracker ─────────────────────────────────────────────────
+function renderTracker(){
+  document.getElementById('tracker').innerHTML = `
+    <div class="card" style="margin-bottom:16px">
+      <h3 class="section-title">Добавить тренировку</h3>
+      <div class="grid-3">
+        <div><label>Дата</label><input type="date" id="entry-date" value="${state.entry.date}"></div>
+        <div><label>Слова</label><input type="number" id="entry-words" value="${state.entry.wordsLearned}"></div>
+        <div><label>Speaking, мин</label><input type="number" id="entry-speaking" value="${state.entry.speakingMinutes}"></div>
+      </div>
+      <div class="button-row" style="align-items:center;margin-top:10px">
+        <label style="display:flex;align-items:center;gap:10px;margin:0;text-transform:none;font-size:14px;font-weight:600;color:var(--text)">
+          <input type="checkbox" id="entry-listening" ${state.entry.listeningDone?'checked':''} style="width:auto"> Аудирование выполнено
+        </label>
+      </div>
+      <div style="margin-top:14px"><label>Заметки</label><textarea id="entry-notes">${esc(state.entry.notes)}</textarea></div>
+      <div class="button-row"><button class="btn" onclick="addEntry()">Добавить</button></div>
+    </div>
+    <div class="card">
+      <h3 class="section-title">История тренировок</h3>
+      <div class="list">
+        ${state.tracker.length ? state.tracker.map(item=>`
+          <div class="item-card">
+            <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+              <strong>${item.date}</strong>
+              <div class="chips">
+                <span class="chip">Слова: ${item.wordsLearned}</span>
+                <span class="chip">Speaking: ${item.speakingMinutes} мин</span>
+                <span class="chip">Аудирование: ${item.listeningDone?'Да':'Нет'}</span>
+              </div>
+            </div>
+            ${item.notes?`<div class="small-muted" style="margin-top:8px">${esc(item.notes)}</div>`:''}
+          </div>`).join('') : '<div class="small-muted">Записей пока нет.</div>'}
+      </div>
+    </div>`;
+}
+function addEntry(){
+  state.entry = {
+    date: document.getElementById('entry-date').value,
+    wordsLearned: Number(document.getElementById('entry-words').value||0),
+    speakingMinutes: Number(document.getElementById('entry-speaking').value||0),
+    listeningDone: document.getElementById('entry-listening').checked,
+    notes: document.getElementById('entry-notes').value.trim()
+  };
+  state.tracker.unshift({...state.entry});
+  state.tracker.sort((a,b)=>b.date.localeCompare(a.date));
+  state.entry = { date:todayISO(), wordsLearned:10, speakingMinutes:20, listeningDone:true, notes:'' };
+  persist(); renderTracker(); renderDashboard();
+}
+
+// ─── Dictionary ───────────────────────────────────────────────
+function dictionaryCategories(){ return ['все',...Array.from(new Set(state.dictionary.map(x=>x.category)))]; }
+function filteredDictionary(){
+  const q = state.search.trim().toLowerCase();
+  return state.dictionary.filter(item => {
+    const s = [item.word,item.translation,item.example,item.exampleTranslation,item.category,item.status,item.phonetic,item.pronounce].join(' ').toLowerCase();
+    return (!q||s.includes(q)) && (state.statusFilter==='все'||item.status===state.statusFilter) && (state.categoryFilter==='все'||item.category===state.categoryFilter);
+  });
+}
+function parseKey(key){ const [word,translation,category,example] = decodeURIComponent(key).split('|'); return {word,translation,category,example}; }
+function wordCard(item){
+  const statusClass = item.status==='новое'?'status-new':item.status==='учу'?'status-learning':'status-known';
+  const key = encodeURIComponent(item.word+'|'+item.translation+'|'+item.category+'|'+(item.example||''));
+  return `<div class="word-card">
+    <div class="word-top">
+      <div>
+        <div class="word-title">${esc(item.word)}</div>
+        <div class="chips" style="margin-top:8px">
+          <span class="chip">${esc(item.category)}</span>
+          <span class="chip">${esc(item.source)}</span>
+          <span class="chip ${statusClass}">${esc(item.status)}</span>
+          ${item.reviewToday?'<span class="chip">Повторить сегодня</span>':''}
+        </div>
+      </div>
+      <button class="btn danger small" onclick="removeWord('${key}')">Удалить</button>
+    </div>
+    <div style="margin-top:10px;font-weight:700">${esc(item.translation)}</div>
+    ${(item.phonetic||item.pronounce)?`
+      <div class="phonetics" style="margin-top:10px">
+        ${item.phonetic?`<span class="pill">${esc(item.phonetic)}</span>`:''}
+        ${item.pronounce?`<span class="pill">${esc(item.pronounce)}</span>`:''}
+        <button class="btn secondary small" onclick="speakText(${safeJson(item.word)})">🔊 Слово</button>
+        ${item.example?`<button class="btn secondary small" onclick="speakText(${safeJson(item.example)})">🔊 Пример</button>`:''}
+      </div>`:''}
+    ${item.example?`
+      <div class="item-card" style="margin-top:10px">
+        <div><strong>Пример:</strong> ${esc(item.example)}</div>
+        ${item.exampleTranslation?`<div class="small-muted" style="margin-top:6px"><strong>Перевод:</strong> ${esc(item.exampleTranslation)}</div>`:''}
+      </div>`:''}
+    <div class="button-row">
+      ${['новое','учу','знаю'].map(st=>`<button class="btn ${item.status===st?'':'secondary'} small" onclick="updateWordStatus('${key}','${st}')">${st}</button>`).join('')}
+      <button class="btn ${item.reviewToday?'':'secondary'} small" onclick="toggleReview('${key}')">Повторить сегодня</button>
+    </div>
+  </div>`;
+}
+function renderDictionary(){
+  document.getElementById('dictionary').innerHTML = `
+    <div class="grid-2">
+      <div class="card">
+        <h3 class="section-title">Добавить своё слово</h3>
+        <div style="display:grid;gap:12px">
+          <div><label>Слово или фраза</label><input id="nw-word" value="${esc(state.newWord.word)}"></div>
+          <div><label>Перевод</label><input id="nw-translation" value="${esc(state.newWord.translation)}"></div>
+          <div><label>Транскрипция</label><input id="nw-phonetic" value="${esc(state.newWord.phonetic)}" placeholder="/ˈʃɪpmənt/"></div>
+          <div><label>Русская подсказка по чтению</label><input id="nw-pronounce" value="${esc(state.newWord.pronounce)}" placeholder="шипмэнт"></div>
+          <div><label>Категория</label><input id="nw-category" value="${esc(state.newWord.category)}"></div>
+          <div><label>Пример</label><textarea id="nw-example">${esc(state.newWord.example)}</textarea></div>
+          <div><label>Перевод примера</label><textarea id="nw-example-translation">${esc(state.newWord.exampleTranslation)}</textarea></div>
+          <div>
+            <label>Статус</label>
+            <div class="button-row">
+              ${['новое','учу','знаю'].map(st=>`<button class="btn ${state.newWord.status===st?'':'secondary'} small" onclick="setNewWordStatus('${st}')">${st}</button>`).join('')}
+            </div>
+          </div>
+          <button class="btn" onclick="addWord()">Добавить в словарь</button>
+          <div class="notice">У каждого слова можно хранить пример и перевод примера — это помогает понимать контекст, а не только само слово.</div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:grid;gap:12px;margin-bottom:14px">
+          <h3 class="section-title" style="margin:0">Словарь (${state.dictionary.length} слов)</h3>
+          <div class="filters">
+            <input placeholder="Поиск по словарю" value="${esc(state.search)}" oninput="setSearch(this.value)">
+            <select onchange="setStatusFilter(this.value)">
+              ${['все','новое','учу','знаю'].map(x=>`<option value="${x}" ${state.statusFilter===x?'selected':''}>${x==='все'?'Все статусы':x}</option>`).join('')}
+            </select>
+            <select onchange="setCategoryFilter(this.value)">
+              ${dictionaryCategories().map(x=>`<option value="${esc(x)}" ${state.categoryFilter===x?'selected':''}>${x==='все'?'Все категории':x}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div class="list">
+          ${filteredDictionary().length ? filteredDictionary().map(item=>wordCard(item)).join('') : '<div class="small-muted">По выбранным фильтрам ничего не найдено.</div>'}
+        </div>
+      </div>
+    </div>`;
+}
+function setNewWordStatus(status){ state.newWord.status = status; renderDictionary(); }
+function setSearch(v){ state.search = v; renderDictionary(); }
+function setStatusFilter(v){ state.statusFilter = v; renderDictionary(); }
+function setCategoryFilter(v){ state.categoryFilter = v; renderDictionary(); }
+function addWord(){
+  state.newWord.word = document.getElementById('nw-word').value.trim();
+  state.newWord.translation = document.getElementById('nw-translation').value.trim();
+  state.newWord.phonetic = document.getElementById('nw-phonetic').value.trim();
+  state.newWord.pronounce = document.getElementById('nw-pronounce').value.trim();
+  state.newWord.category = document.getElementById('nw-category').value.trim() || 'Мои слова';
+  state.newWord.example = document.getElementById('nw-example').value.trim();
+  state.newWord.exampleTranslation = document.getElementById('nw-example-translation').value.trim();
+  if(!state.newWord.word || !state.newWord.translation) return alert('Заполни слово и перевод.');
+  state.dictionary.unshift({ ...state.newWord, source:'пользователь', reviewToday:false, addedAt:todayISO() });
+  state.newWord = { word:'', translation:'', phonetic:'', pronounce:'', example:'', exampleTranslation:'', category:'Мои слова', source:'пользователь', status:'новое', reviewToday:false };
+  persist(); renderDictionary(); renderDashboard(); renderReview();
+}
+function removeWord(key){
+  const t = parseKey(key);
+  state.dictionary = state.dictionary.filter(item => !(item.word===t.word && item.translation===t.translation && item.category===t.category && (item.example||'')===t.example));
+  persist(); renderDictionary(); renderDashboard(); renderReview();
+}
+function updateWordStatus(key, status){
+  const t = parseKey(key);
+  state.dictionary = state.dictionary.map(item => (item.word===t.word && item.translation===t.translation && item.category===t.category && (item.example||'')===t.example) ? {...item, status} : item);
+  persist(); renderDictionary(); renderDashboard(); renderReview();
+}
+function toggleReview(key){
+  const t = parseKey(key);
+  state.dictionary = state.dictionary.map(item => (item.word===t.word && item.translation===t.translation && item.category===t.category && (item.example||'')===t.example) ? {...item, reviewToday:!item.reviewToday} : item);
+  persist(); renderDictionary(); renderDashboard(); renderReview();
+}
+
+// ─── Review ───────────────────────────────────────────────────
+function wordsForReview(){ return state.dictionary.filter(item => item.reviewToday || item.status==='новое' || item.status==='учу'); }
+function currentReviewWord(){ const arr = wordsForReview(); if(!arr.length) return null; return arr[state.flashIndex % arr.length]; }
+function renderReview(){
+  const w = currentReviewWord();
+  const arr = wordsForReview();
+  document.getElementById('review').innerHTML = `
+    <div class="grid-2" style="grid-template-columns:1.2fr 1fr">
+      <div class="card">
+        <h3 class="section-title">Карточки на повторение</h3>
+        ${!w ? `<div class="small-muted">Нет слов для повторения. Отметь слова кнопкой «Повторить сегодня» или оставь статус «новое / учу».</div>` : `
+          <div class="review-card">
+            <div>
+              <div class="small-muted">Карточка ${(state.flashIndex % arr.length)+1} из ${arr.length}</div>
+              <div class="flash-word">${esc(w.word)}</div>
+              <div class="small-muted">${esc(w.category)}</div>
+              ${(w.phonetic||w.pronounce)?`<div class="phonetics" style="margin-top:12px">
+                ${w.phonetic?`<span class="pill">${esc(w.phonetic)}</span>`:''}
+                ${w.pronounce?`<span class="pill">${esc(w.pronounce)}</span>`:''}
+                <button class="btn secondary small" onclick="speakText(${safeJson(w.word)})">🔊 Слово</button>
+                ${w.example?`<button class="btn secondary small" onclick="speakText(${safeJson(w.example)})">🔊 Пример</button>`:''}
+              </div>`:''}
+              ${state.showAnswer?`<div style="margin-top:18px">
+                <div style="font-size:20px;font-weight:800">${esc(w.translation)}</div>
+                ${w.example?`<div class="item-card" style="margin-top:10px"><div>${esc(w.example)}</div>${w.exampleTranslation?`<div class="small-muted" style="margin-top:6px">${esc(w.exampleTranslation)}</div>`:''}</div>`:''}
+              </div>`:''}
+            </div>
+            <div class="button-row">
+              <button class="btn" onclick="toggleAnswer()">${state.showAnswer?'Скрыть ответ':'Показать ответ'}</button>
+              <button class="btn secondary" onclick="nextReview()">Следующее</button>
+            </div>
+          </div>
+          <div class="button-row" style="margin-top:12px">
+            <button class="btn secondary" onclick="markReviewStatus('новое')">Снова новое</button>
+            <button class="btn secondary" onclick="markReviewStatus('учу')">Оставить в учу</button>
+            <button class="btn" onclick="markReviewStatus('знаю')">Пометить как знаю</button>
+          </div>`}
+      </div>
+      <div class="card">
+        <h3 class="section-title">Как работает повторение</h3>
+        <div class="list">
+          <div class="item-card"><strong>1. Видишь слово</strong><div class="small-muted" style="margin-top:6px">Прочитай слово, вспомни перевод и пример. Нажми «Показать ответ» для проверки.</div></div>
+          <div class="item-card"><strong>2. Оцени себя</strong><div class="small-muted" style="margin-top:6px">Знаешь уверенно → «Знаю». Вспомнил с трудом → «Учу». Забыл → «Снова новое».</div></div>
+          <div class="item-card"><strong>3. Слушай примеры</strong><div class="small-muted" style="margin-top:6px">Нажимай 🔊 чтобы слышать произношение и запомнить звучание.</div></div>
+          <div class="item-card"><strong>4. Помечай на сегодня</strong><div class="small-muted" style="margin-top:6px">В словаре можно отметить нужные слова кнопкой «Повторить сегодня».</div></div>
+        </div>
+      </div>
+    </div>`;
+}
+function toggleAnswer(){ state.showAnswer = !state.showAnswer; renderReview(); }
+function nextReview(){ state.showAnswer = false; state.flashIndex += 1; renderReview(); }
+function markReviewStatus(status){
+  const w = currentReviewWord(); if(!w) return;
+  state.dictionary = state.dictionary.map(item => item.word===w.word && item.translation===w.translation && item.category===w.category && (item.example||'')===(w.example||'') ? {...item, status, reviewToday:status!=='знаю'} : item);
+  persist(); state.showAnswer = false; state.flashIndex += 1;
+  renderReview(); renderDictionary(); renderDashboard();
+}
+
+// ─── Topics ───────────────────────────────────────────────────
+function renderTopics(){
+  document.getElementById('topics').innerHTML = `
+    <div class="grid-2">
+      <div class="card">
+        <h3 class="section-title">Добавить тему speaking</h3>
+        <div style="display:grid;gap:12px">
+          <div><label>Название темы</label><input id="topic-title" value="${esc(state.newTopic.title)}"></div>
+          <div><label>Текст-пример на английском</label><textarea id="topic-text">${esc(state.newTopic.text)}</textarea></div>
+          <div><label>Перевод текста</label><textarea id="topic-translation">${esc(state.newTopic.translation)}</textarea></div>
+          <div class="button-row"><button class="btn" onclick="addTopic()">Добавить тему</button></div>
+          <div class="notice">Добавляй тему вместе с примером текста — тогда можно читать, слушать, пересказывать и адаптировать под себя.</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3 class="section-title">Темы для speaking</h3>
+        <div class="list">
+          ${state.topics.map((topic,i)=>`
+            <div class="item-card">
+              <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap">
+                <strong>${esc(topic.title)}</strong>
+                <button class="btn danger small" onclick="removeTopic(${i})">Удалить</button>
+              </div>
+              ${topic.text?`<div class="item-card" style="margin-top:10px">
+                <div class="topic-text">${esc(topic.text)}</div>
+                <div class="button-row">
+                  <button class="btn secondary small" onclick="speakText(${safeJson(topic.text)})">🔊 Озвучить</button>
+                  <button class="btn secondary small" onclick="copyText(${safeJson(topic.text)})">Скопировать</button>
+                  ${state.copied===topic.text.slice(0,40)?'<span class="copy-ok">Скопировано ✓</span>':''}
+                </div>
+              </div>`:''}
+              ${topic.translation?`<div class="item-card" style="margin-top:8px;background:#fafcff">
+                <div class="small-muted" style="font-weight:700;margin-bottom:6px">Перевод:</div>
+                <div class="topic-text">${esc(topic.translation)}</div>
+              </div>`:''}
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+function addTopic(){
+  const title = document.getElementById('topic-title').value.trim();
+  const text = document.getElementById('topic-text').value.trim();
+  const translation = document.getElementById('topic-translation').value.trim();
+  if(!title) return alert('Добавь название темы.');
+  state.topics.unshift({ title, text, translation });
+  state.newTopic = { title:'', text:'', translation:'' };
+  persist(); renderTopics();
+}
+function removeTopic(i){ state.topics.splice(i,1); persist(); renderTopics(); }
+
+// ─── Grammar ──────────────────────────────────────────────────
+function renderGrammar(){
+  const categories = [...new Set(grammarData.map(g=>g.category))];
+
+  const nav = categories.map(cat => `
+    <div class="grammar-nav-category">${cat}</div>
+    ${grammarData.filter(g=>g.category===cat).map(g=>`
+      <button class="grammar-nav-item ${state.activeGrammar===g.id?'active':''}" onclick="setGrammar('${g.id}')">${g.title}</button>
+    `).join('')}
+  `).join('');
+
+  const content = grammarData.map(g=>`
+    <div class="grammar-content ${state.activeGrammar===g.id?'active':''}" id="gc-${g.id}">
+      <h3 class="section-title">${g.title}</h3>
+      ${g.content}
+    </div>
+  `).join('');
+
+  const verbsFiltered = irregularVerbs.filter(v => {
+    const q = state.verbSearch.trim().toLowerCase();
+    return !q || v.v1.includes(q) || v.v2.includes(q) || v.v3.includes(q) || v.tr.toLowerCase().includes(q);
+  });
+
+  document.getElementById('grammar').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+      <div class="card" style="grid-column:1/-1">
+        <h3 class="section-title">Грамматика и правила</h3>
+        <div class="notice" style="margin-bottom:0">Выбери тему слева, изучи правило и нажми на ссылку — видео откроется в новой вкладке.</div>
+      </div>
+    </div>
+    <div class="grammar-grid">
+      <div class="card" style="padding:12px">
+        <div class="grammar-nav">${nav}</div>
+      </div>
+      <div class="card">${content}</div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <h3 class="section-title">Неправильные глаголы (${irregularVerbs.length})</h3>
+      <div class="verb-search">
+        <input placeholder="Поиск по глаголам (on английском или по-русски)…" value="${esc(state.verbSearch)}" oninput="setVerbSearch(this.value)">
+      </div>
+      <div class="table-wrapper">
+        <table class="verb-table">
+          <thead>
+            <tr>
+              <th>Infinitive (V1)</th>
+              <th>Past Simple (V2)</th>
+              <th>Past Participle (V3)</th>
+              <th>Перевод</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${verbsFiltered.length ? verbsFiltered.map(v=>`
+              <tr>
+                <td class="v1">${esc(v.v1)}</td>
+                <td class="v2">${esc(v.v2)}</td>
+                <td class="v3">${esc(v.v3)}</td>
+                <td class="vtrans">${esc(v.tr)}</td>
+              </tr>`).join('') : '<tr><td colspan="4" style="color:var(--muted);padding:16px">Ничего не найдено</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+function setGrammar(id){ state.activeGrammar = id; renderGrammar(); }
+function setVerbSearch(v){ state.verbSearch = v; renderGrammar(); }
+
+// ─── Resources ────────────────────────────────────────────────
+function renderResources(){
+  document.getElementById('resources').innerHTML = `
+    <div class="grid-2-equal">
+      <div class="card">
+        <h3 class="section-title">Полезные ресурсы</h3>
+        <div class="list">
+          ${resourceLinks.map(r=>`
+            <a class="resource-card" href="${r.url}" target="_blank" rel="noreferrer">
+              <div style="display:flex;justify-content:space-between;gap:12px;align-items:center">
+                <div>
+                  <strong>${esc(r.title)}</strong>
+                  <div class="small-muted" style="margin-top:4px">${esc(r.category)}</div>
+                </div>
+                <span class="chip">Открыть →</span>
+              </div>
+            </a>`).join('')}
+        </div>
+      </div>
+      <div class="card">
+        <h3 class="section-title">Как использовать приложение</h3>
+        <div class="list">
+          <div class="item-card"><strong>1. Каждый день</strong><div class="small-muted" style="margin-top:6px">Добавляй тренировку в трекер: слова, минуты speaking и аудирование.</div></div>
+          <div class="item-card"><strong>2. Словарь</strong><div class="small-muted" style="margin-top:6px">Смотри слово → транскрипция → пример → перевод примера. Контекст помогает запоминать.</div></div>
+          <div class="item-card"><strong>3. Повторение</strong><div class="small-muted" style="margin-top:6px">Используй карточки 5–10 минут в день, слушай примеры через озвучку.</div></div>
+          <div class="item-card"><strong>4. Speaking</strong><div class="small-muted" style="margin-top:6px">Используй готовые тексты как шаблон, упрощай под свою речь и говори вслух.</div></div>
+          <div class="item-card"><strong>5. Грамматика</strong><div class="small-muted" style="margin-top:6px">Изучай правила, смотри видео и возвращайся к таблице неправильных глаголов.</div></div>
+          <div class="item-card"><strong>6. Сохраняй прогресс</strong><div class="small-muted" style="margin-top:6px">Раз в неделю экспортируй JSON-резервную копию из дашборда.</div></div>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ─── Init ────────────────────────────────────────────────────
+function renderAll(){
+  renderTabs();
+  renderDashboard();
+  renderTracker();
+  renderDictionary();
+  renderReview();
+  renderTopics();
+  renderGrammar();
+  renderResources();
+}
+renderAll();
+</script>
+</body>
+</html>
