@@ -31,6 +31,51 @@
       --radius-sm:12px;
       --radius-xs:8px;
     }
+
+    [data-theme="dark"]{
+      --bg:#0f1117;
+      --card:#1a1d27;
+      --text:#f1f5f9;
+      --muted:#94a3b8;
+      --line:#2d3148;
+      --line-hover:#3d4266;
+      --primary:#6272ea;
+      --primary-dark:#4f5fd4;
+      --primary-soft:#1e2240;
+      --primary-text:#a5b4fc;
+      --green:#34d399;
+      --green-soft:#0d2e22;
+      --amber:#fbbf24;
+      --red:#f87171;
+      --shadow:0 1px 3px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+      --shadow-lg:0 4px 6px rgba(0,0,0,.25),0 20px 40px rgba(0,0,0,.35);
+      --shadow-sm:0 1px 2px rgba(0,0,0,.2);
+    }
+    [data-theme="dark"] input,[data-theme="dark"] textarea,[data-theme="dark"] select{
+      background:var(--card);color:var(--text);border-color:var(--line);
+    }
+    [data-theme="dark"] .word-card,[data-theme="dark"] .item-card,[data-theme="dark"] .resource-card{background:var(--card)}
+    [data-theme="dark"] .review-card{background:linear-gradient(180deg,#1a1d27,#141720)}
+    [data-theme="dark"] .rule-block{background:var(--card)}
+    [data-theme="dark"] .rule-example{background:#0d1120;border-color:#2d3148}
+    [data-theme="dark"] .rule-formula{background:#1a1d27;border-color:#2d3148;color:var(--text)}
+    [data-theme="dark"] .btn.secondary{background:var(--card);color:var(--text)}
+    [data-theme="dark"] .btn.soft{background:var(--primary-soft);color:var(--primary-text)}
+    [data-theme="dark"] .notice{background:var(--primary-soft);border-color:#3d4266;color:var(--primary-text)}
+    [data-theme="dark"] .grammar-nav-item.active{background:var(--primary-soft);color:var(--primary-text)}
+    [data-theme="dark"] .verb-table th{background:#141720}
+    [data-theme="dark"] .verb-table td,[data-theme="dark"] .verb-table th{border-color:var(--line)}
+    [data-theme="dark"] .verb-table tr:hover td{background:#1e2240}
+    [data-theme="dark"] .mini-box{background:var(--card)}
+    [data-theme="dark"] .answer-box{background:#1e2240}
+    [data-theme="dark"] .theme-toggle{color:#fff}
+    .theme-toggle{
+      background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);
+      color:#fff;border-radius:var(--radius-xs);padding:7px 14px;
+      cursor:pointer;font:inherit;font-size:13px;font-weight:700;
+      backdrop-filter:blur(8px);transition:all .15s ease;
+    }
+    .theme-toggle:hover{background:rgba(255,255,255,.25)}
     *{box-sizing:border-box;margin:0;padding:0}
     body{
       font-family:'Inter','Segoe UI','Helvetica Neue',Arial,sans-serif;
@@ -286,6 +331,7 @@
           <span class="badge">60 мин/день</span>
           <span class="badge">Business English</span>
         </div>
+        <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙 Тёмная</button>
       </div>
     </section>
 
@@ -295,6 +341,7 @@
     <section id="tracker" class="tab-pane"></section>
     <section id="dictionary" class="tab-pane"></section>
     <section id="review" class="tab-pane"></section>
+    <section id="quiz" class="tab-pane"></section>
     <section id="topics" class="tab-pane"></section>
     <section id="grammar" class="tab-pane"></section>
     <section id="resources" class="tab-pane"></section>
@@ -864,6 +911,7 @@ const state = {
   copied: '',
   activeGrammar: 'present-simple',
   verbSearch: '',
+  quiz: { current: null, options: [], answered: null, score: 0, total: 0, mode: 'translation', categoryFilter: 'все' },
 };
 
 const tabs = [
@@ -871,6 +919,7 @@ const tabs = [
   ['tracker','Трекер'],
   ['dictionary','Словарь'],
   ['review','Повторение'],
+  ['quiz','Тест'],
   ['topics','Speaking'],
   ['grammar','Грамматика'],
   ['resources','Ресурсы'],
@@ -1554,6 +1603,200 @@ function renderGrammar(){
 function setGrammar(id){ state.activeGrammar = id; renderGrammar(); }
 function setVerbSearch(v){ state.verbSearch = v; renderGrammar(); }
 
+
+// ─── Quiz ─────────────────────────────────────────────────────
+function quizCategories(){ return ['все',...Array.from(new Set(state.dictionary.map(x=>x.category)))]; }
+function quizPool(){
+  const cat = state.quiz.categoryFilter;
+  const pool = cat==='все' ? state.dictionary : state.dictionary.filter(w=>w.category===cat);
+  return pool.filter(w=>w.word && w.translation);
+}
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-.5); }
+function generateQuizQuestion(){
+  const pool = quizPool();
+  if(pool.length < 4){ state.quiz.current = null; state.quiz.options = []; return; }
+  const correct = pool[Math.floor(Math.random()*pool.length)];
+  const wrong = shuffle(pool.filter(w=>w.word!==correct.word)).slice(0,3);
+  const options = shuffle([correct,...wrong]);
+  state.quiz.current = correct;
+  state.quiz.options = options;
+  state.quiz.answered = null;
+}
+function quizAnswer(word){
+  if(state.quiz.answered !== null) return;
+  state.quiz.answered = word;
+  state.quiz.total++;
+  if(word === state.quiz.current.word) state.quiz.score++;
+  renderQuiz();
+}
+function quizNext(){
+  generateQuizQuestion();
+  renderQuiz();
+}
+function quizReset(){
+  state.quiz.score = 0;
+  state.quiz.total = 0;
+  generateQuizQuestion();
+  renderQuiz();
+}
+function setQuizCategory(v){
+  state.quiz.categoryFilter = v;
+  state.quiz.score = 0;
+  state.quiz.total = 0;
+  generateQuizQuestion();
+  renderQuiz();
+}
+function setQuizMode(v){
+  state.quiz.mode = v;
+  state.quiz.score = 0;
+  state.quiz.total = 0;
+  generateQuizQuestion();
+  renderQuiz();
+}
+function renderQuiz(){
+  const q = state.quiz;
+  const pool = quizPool();
+  const acc = q.total > 0 ? Math.round((q.score/q.total)*100) : 0;
+
+  if(!q.current){
+    generateQuizQuestion();
+  }
+  const w = q.current;
+
+  // Determine what to show as the question and what to show as options
+  // mode 'translation': show English word → choose Russian translation
+  // mode 'word': show Russian translation → choose English word
+  const showQuestion = q.mode === 'translation'
+    ? (w ? esc(w.word) : '')
+    : (w ? esc(w.translation) : '');
+
+  const optionLabel = (opt) => q.mode === 'translation'
+    ? esc(opt.translation.split(';')[0].trim())
+    : esc(opt.word);
+
+  const optionKey = (opt) => opt.word;
+
+  document.getElementById('quiz').innerHTML = `
+    <div class="grid-2" style="grid-template-columns:1.3fr 1fr">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px">
+          <h3 class="section-title" style="margin:0">Тест: выбери правильный ответ</h3>
+          <div class="chips">
+            <span class="chip" style="background:#ecfdf5;border-color:#a7f3d0;color:#065f46;font-weight:700">${q.score}/${q.total}</span>
+            ${q.total>0?`<span class="chip" style="${acc>=70?'background:#ecfdf5;border-color:#a7f3d0;color:#065f46':'background:#fef2f2;border-color:#fecaca;color:#dc2626'}">${acc}%</span>`:''}
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+          <select onchange="setQuizCategory(this.value)" style="flex:1;min-width:140px">
+            ${quizCategories().map(c=>`<option value="${esc(c)}" ${q.categoryFilter===c?'selected':''}>${c==='все'?'Все категории':esc(c)}</option>`).join('')}
+          </select>
+          <div style="display:flex;gap:4px">
+            <button class="btn ${q.mode==='translation'?'':'secondary'} small" onclick="setQuizMode('translation')">EN→RU</button>
+            <button class="btn ${q.mode==='word'?'':'secondary'} small" onclick="setQuizMode('word')">RU→EN</button>
+          </div>
+        </div>
+
+        ${pool.length < 4 ? `
+          <div class="notice">В выбранной категории меньше 4 слов. Выбери другую категорию или добавь слова в словарь.</div>
+        ` : !w ? '' : `
+          <div style="text-align:center;padding:24px 16px 28px;background:var(--primary-soft);border-radius:var(--radius-sm);margin-bottom:16px">
+            <div class="small-muted" style="margin-bottom:8px">${q.mode==='translation'?'Что означает это слово?':'Как это будет по-английски?'}</div>
+            <div style="font-size:32px;font-weight:900;letter-spacing:-.02em;color:var(--primary-text)">${showQuestion}</div>
+            ${q.mode==='translation' && w.phonetic?`<div class="small-muted" style="margin-top:6px">${esc(w.phonetic)}</div>`:''}
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            ${q.options.map((opt,i)=>{
+              let style = '';
+              let extra = '';
+              if(q.answered !== null){
+                if(optionKey(opt)===w.word){
+                  style='background:#ecfdf5;border-color:#059669;border-width:2px';
+                  extra='✓ ';
+                } else if(optionKey(opt)===q.answered && optionKey(opt)!==w.word){
+                  style='background:#fef2f2;border-color:#dc2626;border-width:2px';
+                  extra='✗ ';
+                }
+              }
+              return `<button
+                onclick="quizAnswer('${esc(optionKey(opt))}')"
+                style="padding:14px 10px;border-radius:var(--radius-sm);border:1.5px solid var(--line);background:var(--card);cursor:pointer;font:inherit;font-size:14px;font-weight:600;text-align:left;transition:all .15s;${style}"
+              >${extra}${optionLabel(opt)}</button>`;
+            }).join('')}
+          </div>
+
+          ${q.answered!==null?`
+            <div style="margin-top:16px">
+              ${q.answered===w.word?`
+                <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:var(--radius-sm);padding:12px 14px;color:#065f46;font-weight:700">
+                  ✓ Правильно!
+                </div>`:`
+                <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:var(--radius-sm);padding:12px 14px;color:#991b1b;font-weight:700">
+                  ✗ Неверно — правильный ответ: <span style="text-decoration:underline">${q.mode==='translation'?esc(w.translation):esc(w.word)}</span>
+                </div>`}
+              ${w.example?`<div class="item-card" style="margin-top:10px;font-size:13px">
+                <div>${esc(w.example)}</div>
+                ${w.exampleTranslation?`<div class="small-muted" style="margin-top:4px">${esc(w.exampleTranslation)}</div>`:''}
+                <button class="btn secondary small" style="margin-top:8px" onclick="speakText(${safeJson(w.example)})">🔊 Послушать</button>
+              </div>`:''}
+              <div class="button-row" style="margin-top:12px">
+                <button class="btn" onclick="quizNext()">Следующий вопрос →</button>
+                ${q.total>0&&q.total%10===0?`<button class="btn secondary" onclick="quizReset()">Начать заново</button>`:''}
+              </div>
+            </div>`:''}
+        `}
+      </div>
+
+      <div class="card">
+        <h3 class="section-title">Статистика теста</h3>
+        <div class="list">
+          <div class="item-card">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div style="text-align:center;padding:12px;background:var(--primary-soft);border-radius:var(--radius-sm)">
+                <div style="font-size:28px;font-weight:900;color:var(--primary)">${q.score}</div>
+                <div class="small-muted">Правильно</div>
+              </div>
+              <div style="text-align:center;padding:12px;background:#fef2f2;border-radius:var(--radius-sm)">
+                <div style="font-size:28px;font-weight:900;color:#dc2626">${q.total-q.score}</div>
+                <div class="small-muted">Ошибки</div>
+              </div>
+            </div>
+            <div style="margin-top:12px">
+              <div class="small-muted" style="margin-bottom:6px">Точность</div>
+              <div class="progress"><div class="bar" style="width:${acc}%;background:${acc>=70?'linear-gradient(90deg,#059669,#10b981)':'linear-gradient(90deg,#dc2626,#f87171)'}"></div></div>
+              <div style="display:flex;justify-content:space-between;margin-top:4px">
+                <span class="small-muted">${acc}%</span>
+                <span class="small-muted">${q.total} вопросов</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="item-card">
+            <strong>Режимы</strong>
+            <div class="small-muted" style="margin-top:6px">
+              <strong>EN→RU</strong> — видишь английское слово, выбираешь перевод<br>
+              <strong>RU→EN</strong> — видишь перевод, выбираешь английское слово
+            </div>
+          </div>
+
+          <div class="item-card">
+            <strong>Совет</strong>
+            <div class="small-muted" style="margin-top:6px">Используй тест вместе с карточками SRS — карточки помогают запомнить, тест проверяет знания. Нажимай 🔊 чтобы слышать произношение после каждого вопроса.</div>
+          </div>
+
+          <div class="item-card">
+            <strong>Слов в базе</strong>
+            <div class="small-muted" style="margin-top:6px">${pool.length} слов в выбранной категории · ${state.dictionary.length} всего</div>
+            <div class="button-row" style="margin-top:8px">
+              <button class="btn secondary small" onclick="quizReset()">Сбросить счёт</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
 // ─── Resources ────────────────────────────────────────────────
 function renderResources(){
   document.getElementById('resources').innerHTML = `
@@ -1588,15 +1831,36 @@ function renderResources(){
 }
 
 // ─── Init ────────────────────────────────────────────────────
+function toggleTheme(){
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('theme-btn').textContent = isDark ? '🌙 Тёмная' : '☀️ Светлая';
+  localStorage.setItem('eng_theme', isDark ? 'light' : 'dark');
+}
+(function(){
+  const saved = localStorage.getItem('eng_theme') || 
+    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', saved);
+  document.addEventListener('DOMContentLoaded', function(){
+    const btn = document.getElementById('theme-btn');
+    if(btn) btn.textContent = saved === 'dark' ? '☀️ Светлая' : '🌙 Тёмная';
+  });
+})();
+
 function renderAll(){
   renderTabs();
   renderDashboard();
   renderTracker();
   renderDictionary();
   renderReview();
+  generateQuizQuestion();
+  renderQuiz();
   renderTopics();
   renderGrammar();
   renderResources();
+  const saved = localStorage.getItem('eng_theme') || 'light';
+  const btn = document.getElementById('theme-btn');
+  if(btn) btn.textContent = saved === 'dark' ? '☀️ Светлая' : '🌙 Тёмная';
 }
 renderAll();
 </script>
