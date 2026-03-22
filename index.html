@@ -345,6 +345,7 @@
     <section id="review" class="tab-pane"></section>
     <section id="quiz" class="tab-pane"></section>
     <section id="topics" class="tab-pane"></section>
+    <section id="reading" class="tab-pane"></section>
     <section id="grammar" class="tab-pane"></section>
     <section id="resources" class="tab-pane"></section>
   </div>
@@ -518,6 +519,381 @@ const defaultTopics = [
   { title:"✉️ Написать деловое письмо", text:"Dear Mr. Johnson, thank you for your email dated March 15th. I am writing to confirm our agreement regarding the supply of household cleaning products. As discussed, we will proceed with the initial order of 500 units on FOB terms. The estimated delivery time is three weeks from the date of payment confirmation. Please find attached the proforma invoice and product specifications. Kindly review and confirm at your earliest convenience. We look forward to a successful partnership. Best regards, Evgenii", translation:"Уважаемый господин Джонсон, благодарю за ваше письмо от 15 марта. Пишу, чтобы подтвердить наше соглашение относительно поставки бытовых чистящих средств. Как обсуждалось, мы приступим к начальному заказу в 500 единиц на условиях FOB. Расчётный срок поставки — три недели с даты подтверждения оплаты. Во вложении вы найдёте проформу-счёт и спецификации продукции. Пожалуйста, изучите и подтвердите при первой возможности. С нетерпением ждём успешного партнёрства. С уважением, Евгений" },
   { title:"🤝 Переговоры — найти компромисс", text:"I understand your position, and I appreciate your transparency. Let me see what we can do. We're not able to reduce the price further at this volume, but what we can offer is priority production and a guaranteed lead time of two weeks. Additionally, we can include free samples of our new product line with this order. Would that work for you? I believe this is a fair compromise for both sides.", translation:"Я понимаю вашу позицию и ценю вашу откровенность. Давайте посмотрим, что мы можем сделать. Мы не можем снизить цену дальше при таком объёме, но что мы можем предложить — это приоритетное производство и гарантированный срок поставки две недели. Кроме того, мы можем включить бесплатные образцы нашей новой линейки продуктов к этому заказу. Вас это устроит? Я считаю, это справедливый компромисс для обеих сторон." },
   { title:"🌍 Рассказать об экспортном рынке", text:"We have been exporting to Southeast Asia for the past three years, with a focus on Vietnam, Thailand, and Indonesia. These are fast-growing markets with strong demand for quality household products at competitive prices. The main challenges are local certification requirements and labeling regulations, but we have experience navigating these. We believe China is our next major opportunity, and we are actively looking for the right distribution partner.", translation:"Мы экспортируем в Юго-Восточную Азию последние три года, с акцентом на Вьетнам, Таиланд и Индонезию. Это быстро растущие рынки с высоким спросом на качественную бытовую продукцию по конкурентным ценам. Главные трудности — местные требования к сертификации и правила маркировки, но у нас есть опыт работы с этим. Мы считаем, что Китай — наша следующая крупная возможность, и мы активно ищем правильного партнёра по дистрибуции." },
+
+  // ── 🏠 Дом и быт ──────────────────────────────────────────
+  { word:"apartment", translation:"квартира", phonetic:"/əˈpɑːrtmənt/", pronounce:"эпа́ртмэнт", example:"We rent a small apartment in the city centre.", exampleTranslation:"Мы снимаем небольшую квартиру в центре города.", category:"🏠 Дом", source:"тематический", status:"новое", reviewToday:false },
+  { word:"landlord", translation:"арендодатель; хозяин жилья", phonetic:"/ˈlændlɔːrd/", pronounce:"лэ́ндлорд", example:"The landlord increased the rent by 10%.", exampleTranslation:"Арендодатель повысил арендную плату на 10%.", category:"🏠 Дом", source:"тематический", status:"новое", reviewToday:false },
+  { word:"tenant", translation:"арендатор; жилец", phonetic:"/ˈtenənt/", pronounce:"тэ́нэнт", example:"The tenant signed a one-year lease.", exampleTranslation:"Арендатор подписал договор аренды на год.", category:"🏠 Дом", source:"тематический", status:"новое", reviewToday:false },
+  { word:"mortgage", translation:"ипотека", phonetic:"/ˈmɔːrɡɪdʒ/", pronounce:"мо́ргидж", example:"They took out a mortgage to buy the house.", exampleTranslation:"Они взяли ипотеку, чтобы купить дом.", category:"🏠 Дом", source:"тематический", status:"новое", reviewToday:false },
+  { word:"utilities", translation:"коммунальные услуги", phonetic:"/juːˈtɪlɪtɪz/", pronounce:"ютили́тиз", example:"Utilities are included in the rent.", exampleTranslation:"Коммунальные услуги включены в арендную плату.", category:"🏠 Дом", source:"тематический", status:"новое", reviewToday:false },
+  { word:"furniture", translation:"мебель", phonetic:"/ˈfɜːrnɪtʃər/", pronounce:"фёрничэ", example:"We need to buy new furniture for the living room.", exampleTranslation:"Нам нужно купить новую мебель для гостиной.", category:"🏠 Дом", source:"тематический", status:"новое", reviewToday:false },
+  { word:"appliance", translation:"бытовой прибор", phonetic:"/əˈplaɪəns/", pronounce:"эпла́йэнс", example:"The washing machine is a useful appliance.", exampleTranslation:"Стиральная машина — полезный бытовой прибор.", category:"🏠 Дом", source:"тематический", status:"новое", reviewToday:false },
+  { word:"renovate", translation:"делать ремонт; обновлять", phonetic:"/ˈrenəveɪt/", pronounce:"рэ́новэйт", example:"They plan to renovate the kitchen next year.", exampleTranslation:"Они планируют сделать ремонт на кухне в следующем году.", category:"🏠 Дом", source:"тематический", status:"новое", reviewToday:false },
+  { word:"suburb", translation:"пригород", phonetic:"/ˈsʌbɜːrb/", pronounce:"са́бёрб", example:"They moved to the suburbs to have a bigger garden.", exampleTranslation:"Они переехали в пригород, чтобы иметь большой сад.", category:"🏠 Дом", source:"тематический", status:"новое", reviewToday:false },
+  { word:"neighbourhood", translation:"район; окрестности", phonetic:"/ˈneɪbərhuːd/", pronounce:"нэ́йбэхуд", example:"This is a safe and friendly neighbourhood.", exampleTranslation:"Это безопасный и дружелюбный район.", category:"🏠 Дом", source:"тематический", status:"новое", reviewToday:false },
+
+  // ── 🌤 Погода ─────────────────────────────────────────────
+  { word:"forecast", translation:"прогноз погоды", phonetic:"/ˈfɔːrkæst/", pronounce:"фо́ркаст", example:"The weather forecast says it will rain tomorrow.", exampleTranslation:"Прогноз погоды говорит, что завтра будет дождь.", category:"🌤 Погода", source:"тематический", status:"новое", reviewToday:false },
+  { word:"temperature", translation:"температура", phonetic:"/ˈtemprɪtʃər/", pronounce:"тэ́мпричэ", example:"The temperature dropped below zero last night.", exampleTranslation:"Ночью температура опустилась ниже нуля.", category:"🌤 Погода", source:"тематический", status:"новое", reviewToday:false },
+  { word:"humid", translation:"влажный", phonetic:"/ˈhjuːmɪd/", pronounce:"хью́мид", example:"It is very humid in summer here.", exampleTranslation:"Летом здесь очень влажно.", category:"🌤 Погода", source:"тематический", status:"новое", reviewToday:false },
+  { word:"breeze", translation:"лёгкий ветер; бриз", phonetic:"/briːz/", pronounce:"бриз", example:"A cool breeze came from the sea.", exampleTranslation:"С моря подул прохладный ветерок.", category:"🌤 Погода", source:"тематический", status:"новое", reviewToday:false },
+  { word:"thunderstorm", translation:"гроза", phonetic:"/ˈθʌndərstɔːrm/", pronounce:"са́ндэсторм", example:"The thunderstorm lasted for two hours.", exampleTranslation:"Гроза длилась два часа.", category:"🌤 Погода", source:"тематический", status:"новое", reviewToday:false },
+  { word:"overcast", translation:"пасмурный", phonetic:"/ˌoʊvərˈkæst/", pronounce:"оувэка́ст", example:"The sky is overcast today — bring an umbrella.", exampleTranslation:"Сегодня пасмурно — возьми зонт.", category:"🌤 Погода", source:"тематический", status:"новое", reviewToday:false },
+  { word:"fog", translation:"туман", phonetic:"/fɒɡ/", pronounce:"фог", example:"The fog was so thick we could not see the road.", exampleTranslation:"Туман был таким густым, что мы не видели дорогу.", category:"🌤 Погода", source:"тематический", status:"новое", reviewToday:false },
+  { word:"drought", translation:"засуха", phonetic:"/draʊt/", pronounce:"драут", example:"The drought destroyed crops across the region.", exampleTranslation:"Засуха уничтожила урожай по всему региону.", category:"🌤 Погода", source:"тематический", status:"новое", reviewToday:false },
+  { word:"mild", translation:"мягкий (о климате)", phonetic:"/maɪld/", pronounce:"майлд", example:"We had a mild winter this year.", exampleTranslation:"В этом году у нас была мягкая зима.", category:"🌤 Погода", source:"тематический", status:"новое", reviewToday:false },
+  { word:"chilly", translation:"прохладный; свежий", phonetic:"/ˈtʃɪli/", pronounce:"чи́ли", example:"It is a bit chilly this morning — wear a jacket.", exampleTranslation:"Сегодня утром немного прохладно — надень куртку.", category:"🌤 Погода", source:"тематический", status:"новое", reviewToday:false },
+
+  // ── ✈️ Аэропорт и путешествия ─────────────────────────────
+  { word:"departure", translation:"отправление; вылет", phonetic:"/dɪˈpɑːrtʃər/", pronounce:"дипа́ртчэ", example:"Please check the departure board for your gate.", exampleTranslation:"Проверьте табло вылетов, чтобы узнать ваш выход.", category:"✈️ Аэропорт", source:"тематический", status:"новое", reviewToday:false },
+  { word:"arrival", translation:"прибытие", phonetic:"/əˈraɪvəl/", pronounce:"эра́йвэл", example:"The arrival hall is on the ground floor.", exampleTranslation:"Зал прибытия находится на первом этаже.", category:"✈️ Аэропорт", source:"тематический", status:"новое", reviewToday:false },
+  { word:"check-in", translation:"регистрация на рейс", phonetic:"/ˈtʃek ɪn/", pronounce:"чэк ин", example:"Online check-in opens 24 hours before the flight.", exampleTranslation:"Онлайн-регистрация открывается за 24 часа до рейса.", category:"✈️ Аэропорт", source:"тематический", status:"новое", reviewToday:false },
+  { word:"boarding pass", translation:"посадочный талон", phonetic:"/ˈbɔːrdɪŋ pæs/", pronounce:"бо́рдинг пэс", example:"Please show your boarding pass at the gate.", exampleTranslation:"Пожалуйста, покажите посадочный талон у выхода.", category:"✈️ Аэропорт", source:"тематический", status:"новое", reviewToday:false },
+  { word:"carry-on", translation:"ручная кладь", phonetic:"/ˈkæri ɒn/", pronounce:"кэ́ри он", example:"The carry-on bag must fit in the overhead bin.", exampleTranslation:"Ручная кладь должна помещаться в верхний отсек.", category:"✈️ Аэропорт", source:"тематический", status:"новое", reviewToday:false },
+  { word:"customs", translation:"таможня", phonetic:"/ˈkʌstəmz/", pronounce:"ка́стэмз", example:"Do you have anything to declare at customs?", exampleTranslation:"Есть ли вам что-нибудь задекларировать на таможне?", category:"✈️ Аэропорт", source:"тематический", status:"новое", reviewToday:false },
+  { word:"passport control", translation:"паспортный контроль", phonetic:"/ˈpæspɔːrt kənˌtroʊl/", pronounce:"па́спорт кэнтро́ул", example:"There was a long queue at passport control.", exampleTranslation:"На паспортном контроле была длинная очередь.", category:"✈️ Аэропорт", source:"тематический", status:"новое", reviewToday:false },
+  { word:"layover", translation:"пересадка; транзит", phonetic:"/ˈleɪoʊvər/", pronounce:"лэ́йоувэ", example:"We have a three-hour layover in Dubai.", exampleTranslation:"У нас трёхчасовая пересадка в Дубае.", category:"✈️ Аэропорт", source:"тематический", status:"новое", reviewToday:false },
+  { word:"terminal", translation:"терминал аэропорта", phonetic:"/ˈtɜːrmɪnl/", pronounce:"тёрминэл", example:"Your flight departs from Terminal 2.", exampleTranslation:"Ваш рейс вылетает из Терминала 2.", category:"✈️ Аэропорт", source:"тематический", status:"новое", reviewToday:false },
+  { word:"turbulence", translation:"турбулентность", phonetic:"/ˈtɜːrbjələns/", pronounce:"тёрбьюлэнс", example:"Fasten your seatbelt — there may be turbulence.", exampleTranslation:"Пристегните ремень — возможна турбулентность.", category:"✈️ Аэропорт", source:"тематический", status:"новое", reviewToday:false },
+
+  // ── 🍽 Кафе и рестораны ───────────────────────────────────
+  { word:"menu", translation:"меню", phonetic:"/ˈmenjuː/", pronounce:"мэ́нью", example:"Could we see the menu, please?", exampleTranslation:"Можно нам меню, пожалуйста?", category:"🍽 Кафе", source:"тематический", status:"новое", reviewToday:false },
+  { word:"reservation", translation:"бронирование столика", phonetic:"/ˌrezərˈveɪʃn/", pronounce:"рэзэвэ́йшн", example:"I have a reservation for two at 7 PM.", exampleTranslation:"У меня бронь на двоих на 19:00.", category:"🍽 Кафе", source:"тематический", status:"новое", reviewToday:false },
+  { word:"appetizer", translation:"закуска", phonetic:"/ˈæpɪtaɪzər/", pronounce:"э́питайзэ", example:"We ordered a shared appetizer to start.", exampleTranslation:"Мы заказали общую закуску для начала.", category:"🍽 Кафе", source:"тематический", status:"новое", reviewToday:false },
+  { word:"main course", translation:"основное блюдо", phonetic:"/meɪn kɔːrs/", pronounce:"мэйн корс", example:"For the main course I will have the grilled salmon.", exampleTranslation:"На основное блюдо я возьму жареный лосось.", category:"🍽 Кафе", source:"тематический", status:"новое", reviewToday:false },
+  { word:"bill", translation:"счёт", phonetic:"/bɪl/", pronounce:"бил", example:"Could we have the bill, please?", exampleTranslation:"Можно нам счёт, пожалуйста?", category:"🍽 Кафе", source:"тематический", status:"новое", reviewToday:false },
+  { word:"tip", translation:"чаевые", phonetic:"/tɪp/", pronounce:"тип", example:"It is common to leave a 10-15% tip.", exampleTranslation:"Принято оставлять чаевые 10-15%.", category:"🍽 Кафе", source:"тематический", status:"новое", reviewToday:false },
+  { word:"takeaway", translation:"еда навынос", phonetic:"/ˈteɪkəweɪ/", pronounce:"тэ́йкэвэй", example:"Can we get this as a takeaway?", exampleTranslation:"Можно это оформить навынос?", category:"🍽 Кафе", source:"тематический", status:"новое", reviewToday:false },
+  { word:"portion", translation:"порция", phonetic:"/ˈpɔːrʃn/", pronounce:"по́ршн", example:"The portions here are very generous.", exampleTranslation:"Здесь очень большие порции.", category:"🍽 Кафе", source:"тематический", status:"новое", reviewToday:false },
+  { word:"vegetarian", translation:"вегетарианский", phonetic:"/ˌvedʒəˈteəriən/", pronounce:"вэджэтэ́риэн", example:"Do you have any vegetarian options?", exampleTranslation:"Есть ли у вас вегетарианские блюда?", category:"🍽 Кафе", source:"тематический", status:"новое", reviewToday:false },
+  { word:"waiter", translation:"официант", phonetic:"/ˈweɪtər/", pronounce:"вэ́йтэ", example:"Excuse me, waiter — could I order please?", exampleTranslation:"Извините, официант — можно я закажу?", category:"🍽 Кафе", source:"тематический", status:"новое", reviewToday:false },
+
+  // ── 🏙 Улица и город ──────────────────────────────────────
+  { word:"crossroads", translation:"перекрёсток", phonetic:"/ˈkrɒsroʊdz/", pronounce:"кро́сроудз", example:"Turn left at the crossroads.", exampleTranslation:"На перекрёстке поверните налево.", category:"🏙 Улица", source:"тематический", status:"новое", reviewToday:false },
+  { word:"pavement", translation:"тротуар", phonetic:"/ˈpeɪvmənt/", pronounce:"пэ́йвмэнт", example:"Cyclists should not ride on the pavement.", exampleTranslation:"Велосипедисты не должны ездить по тротуару.", category:"🏙 Улица", source:"тематический", status:"новое", reviewToday:false },
+  { word:"pedestrian", translation:"пешеход", phonetic:"/pəˈdestriən/", pronounce:"пэдэ́стриэн", example:"This street is for pedestrians only.", exampleTranslation:"Эта улица только для пешеходов.", category:"🏙 Улица", source:"тематический", status:"новое", reviewToday:false },
+  { word:"traffic jam", translation:"пробка", phonetic:"/ˈtræfɪk dʒæm/", pronounce:"трэ́фик джэм", example:"We were stuck in a traffic jam for an hour.", exampleTranslation:"Мы застряли в пробке на час.", category:"🏙 Улица", source:"тематический", status:"новое", reviewToday:false },
+  { word:"rush hour", translation:"час пик", phonetic:"/rʌʃ aʊər/", pronounce:"раш а́уэ", example:"Avoid driving during rush hour if you can.", exampleTranslation:"По возможности избегайте езды в час пик.", category:"🏙 Улица", source:"тематический", status:"новое", reviewToday:false },
+  { word:"roundabout", translation:"кольцевая развязка", phonetic:"/ˈraʊndəbaʊt/", pronounce:"ра́ундэбаут", example:"Take the second exit at the roundabout.", exampleTranslation:"На кольцевой развязке сверните на втором выезде.", category:"🏙 Улица", source:"тематический", status:"новое", reviewToday:false },
+  { word:"landmark", translation:"достопримечательность; ориентир", phonetic:"/ˈlændmɑːrk/", pronounce:"лэ́ндмарк", example:"The Eiffel Tower is the most famous landmark in Paris.", exampleTranslation:"Эйфелева башня — самая известная достопримечательность Парижа.", category:"🏙 Улица", source:"тематический", status:"новое", reviewToday:false },
+  { word:"outskirts", translation:"окраина города", phonetic:"/ˈaʊtskɜːrts/", pronounce:"а́утскёртс", example:"The factory is on the outskirts of the city.", exampleTranslation:"Завод находится на окраине города.", category:"🏙 Улица", source:"тематический", status:"новое", reviewToday:false },
+  { word:"shortcut", translation:"короткий путь", phonetic:"/ˈʃɔːrtkʌt/", pronounce:"шо́ртkat", example:"I know a shortcut through the park.", exampleTranslation:"Я знаю короткий путь через парк.", category:"🏙 Улица", source:"тематический", status:"новое", reviewToday:false },
+  { word:"sign", translation:"знак; вывеска; указатель", phonetic:"/saɪn/", pronounce:"сайн", example:"Follow the signs to the city centre.", exampleTranslation:"Следуйте указателям в центр города.", category:"🏙 Улица", source:"тематический", status:"новое", reviewToday:false },
+
+  // ── 🎓 Учёба и образование ────────────────────────────────
+  { word:"degree", translation:"учёная степень; диплом", phonetic:"/dɪˈɡriː/", pronounce:"дигри́", example:"She has a degree in international business.", exampleTranslation:"У неё диплом по международному бизнесу.", category:"🎓 Учёба", source:"тематический", status:"новое", reviewToday:false },
+  { word:"assignment", translation:"задание; работа", phonetic:"/əˈsaɪnmənt/", pronounce:"эса́йнмэнт", example:"The assignment is due on Friday.", exampleTranslation:"Задание нужно сдать в пятницу.", category:"🎓 Учёба", source:"тематический", status:"новое", reviewToday:false },
+  { word:"lecture", translation:"лекция", phonetic:"/ˈlektʃər/", pronounce:"лэ́ктчэ", example:"The lecture on economics starts at 9 AM.", exampleTranslation:"Лекция по экономике начинается в 9 утра.", category:"🎓 Учёба", source:"тематический", status:"новое", reviewToday:false },
+  { word:"seminar", translation:"семинар", phonetic:"/ˈsemɪnɑːr/", pronounce:"сэ́минар", example:"We have a seminar on market research next week.", exampleTranslation:"На следующей неделе у нас семинар по маркетинговым исследованиям.", category:"🎓 Учёба", source:"тематический", status:"новое", reviewToday:false },
+  { word:"scholarship", translation:"стипендия; грант", phonetic:"/ˈskɒlərʃɪp/", pronounce:"ско́лэшип", example:"He received a full scholarship to study abroad.", exampleTranslation:"Он получил полную стипендию для учёбы за рубежом.", category:"🎓 Учёба", source:"тематический", status:"новое", reviewToday:false },
+  { word:"tuition", translation:"плата за обучение", phonetic:"/tjuˈɪʃn/", pronounce:"тьюи́шн", example:"Tuition fees have increased significantly.", exampleTranslation:"Плата за обучение значительно выросла.", category:"🎓 Учёба", source:"тематический", status:"новое", reviewToday:false },
+  { word:"curriculum", translation:"учебная программа", phonetic:"/kəˈrɪkjələm/", pronounce:"кэри́кьюлэм", example:"The curriculum includes business English modules.", exampleTranslation:"Учебная программа включает модули по деловому английскому.", category:"🎓 Учёба", source:"тематический", status:"новое", reviewToday:false },
+  { word:"revise", translation:"повторять (материал)", phonetic:"/rɪˈvaɪz/", pronounce:"рива́йз", example:"I need to revise for the exam next week.", exampleTranslation:"Мне нужно повторить материал к экзамену на следующей неделе.", category:"🎓 Учёба", source:"тематический", status:"новое", reviewToday:false },
+  { word:"submit", translation:"сдавать; отправлять", phonetic:"/səbˈmɪt/", pronounce:"сэбми́т", example:"Please submit your report by Monday.", exampleTranslation:"Пожалуйста, сдайте отчёт до понедельника.", category:"🎓 Учёба", source:"тематический", status:"новое", reviewToday:false },
+  { word:"fluent", translation:"беглый; свободный (о языке)", phonetic:"/ˈfluːənt/", pronounce:"флу́энт", example:"She is fluent in three languages.", exampleTranslation:"Она свободно говорит на трёх языках.", category:"🎓 Учёба", source:"тематический", status:"новое", reviewToday:false },
+
+  // ── 🏥 Здоровье и медицина ────────────────────────────────
+  { word:"symptoms", translation:"симптомы", phonetic:"/ˈsɪmptəmz/", pronounce:"си́мптэмз", example:"Tell the doctor about your symptoms.", exampleTranslation:"Расскажите врачу о своих симптомах.", category:"🏥 Здоровье", source:"тематический", status:"новое", reviewToday:false },
+  { word:"prescription", translation:"рецепт врача", phonetic:"/prɪˈskrɪpʃn/", pronounce:"прискри́пшн", example:"You need a prescription for this medicine.", exampleTranslation:"Для этого лекарства нужен рецепт врача.", category:"🏥 Здоровье", source:"тематический", status:"новое", reviewToday:false },
+  { word:"appointment", translation:"приём у врача; встреча", phonetic:"/əˈpɔɪntmənt/", pronounce:"эпо́йнтмэнт", example:"I have a doctor's appointment at 3 PM.", exampleTranslation:"У меня приём у врача в 15:00.", category:"🏥 Здоровье", source:"тематический", status:"новое", reviewToday:false },
+  { word:"surgery", translation:"хирургия; операция; кабинет врача", phonetic:"/ˈsɜːrdʒəri/", pronounce:"сёрджэри", example:"The surgery went well and he recovered quickly.", exampleTranslation:"Операция прошла успешно, и он быстро восстановился.", category:"🏥 Здоровье", source:"тематический", status:"новое", reviewToday:false },
+  { word:"insurance", translation:"страховка", phonetic:"/ɪnˈʃʊərəns/", pronounce:"иншу́эрэнс", example:"Do you have health insurance?", exampleTranslation:"У вас есть медицинская страховка?", category:"🏥 Здоровье", source:"тематический", status:"новое", reviewToday:false },
+  { word:"allergic", translation:"страдающий аллергией", phonetic:"/əˈlɜːrdʒɪk/", pronounce:"элёрджик", example:"I am allergic to penicillin.", exampleTranslation:"У меня аллергия на пенициллин.", category:"🏥 Здоровье", source:"тематический", status:"новое", reviewToday:false },
+  { word:"dose", translation:"доза", phonetic:"/doʊs/", pronounce:"доус", example:"Take one dose three times a day.", exampleTranslation:"Принимайте одну дозу три раза в день.", category:"🏥 Здоровье", source:"тематический", status:"новое", reviewToday:false },
+  { word:"dizzy", translation:"головокружение; кружится голова", phonetic:"/ˈdɪzi/", pronounce:"ди́зи", example:"I feel dizzy after standing up too fast.", exampleTranslation:"У меня кружится голова после того, как я быстро встал.", category:"🏥 Здоровье", source:"тематический", status:"новое", reviewToday:false },
+  { word:"swollen", translation:"опухший; распухший", phonetic:"/ˈswoʊlən/", pronounce:"сво́улэн", example:"My ankle is swollen after the fall.", exampleTranslation:"Лодыжка опухла после падения.", category:"🏥 Здоровье", source:"тематический", status:"новое", reviewToday:false },
+  { word:"nausea", translation:"тошнота", phonetic:"/ˈnɔːziə/", pronounce:"но́зиэ", example:"She felt nausea during the long flight.", exampleTranslation:"Во время долгого перелёта ей стало плохо.", category:"🏥 Здоровье", source:"тематический", status:"новое", reviewToday:false },
+
+  // ── 🛒 Магазины и покупки ─────────────────────────────────
+  { word:"receipt", translation:"чек; квитанция", phonetic:"/rɪˈsiːt/", pronounce:"риси́т", example:"Keep your receipt in case you need to return the item.", exampleTranslation:"Сохраните чек на случай, если нужно будет вернуть товар.", category:"🛒 Магазин", source:"тематический", status:"новое", reviewToday:false },
+  { word:"refund", translation:"возврат денег", phonetic:"/ˈriːfʌnd/", pronounce:"ри́фанд", example:"Can I get a refund for this item?", exampleTranslation:"Могу я получить возврат за этот товар?", category:"🛒 Магазин", source:"тематический", status:"новое", reviewToday:false },
+  { word:"exchange", translation:"обменять; обмен", phonetic:"/ɪksˈtʃeɪndʒ/", pronounce:"иксчэ́йндж", example:"I would like to exchange this for a larger size.", exampleTranslation:"Я хотел бы обменять это на больший размер.", category:"🛒 Магазин", source:"тематический", status:"новое", reviewToday:false },
+  { word:"bargain", translation:"выгодная покупка; торговаться", phonetic:"/ˈbɑːrɡɪn/", pronounce:"ба́рган", example:"This coat was a real bargain — 50% off.", exampleTranslation:"Это пальто была настоящей выгодной покупкой — 50% скидка.", category:"🛒 Магазин", source:"тематический", status:"новое", reviewToday:false },
+  { word:"out of stock", translation:"нет в наличии", phonetic:"/aʊt əv stɒk/", pronounce:"аут эв сток", example:"The item you ordered is currently out of stock.", exampleTranslation:"Заказанный вами товар сейчас отсутствует в наличии.", category:"🛒 Магазин", source:"тематический", status:"новое", reviewToday:false },
+  { word:"aisle", translation:"проход между рядами", phonetic:"/aɪl/", pronounce:"айл", example:"The dairy products are in aisle five.", exampleTranslation:"Молочные продукты находятся в пятом ряду.", category:"🛒 Магазин", source:"тематический", status:"новое", reviewToday:false },
+  { word:"checkout", translation:"касса", phonetic:"/ˈtʃekaʊt/", pronounce:"чэ́каут", example:"There was a long queue at the checkout.", exampleTranslation:"У кассы была длинная очередь.", category:"🛒 Магазин", source:"тематический", status:"новое", reviewToday:false },
+  { word:"browse", translation:"просматривать; смотреть товары", phonetic:"/braʊz/", pronounce:"браус", example:"I was just browsing — I am not ready to buy yet.", exampleTranslation:"Я просто смотрю — я ещё не готов покупать.", category:"🛒 Магазин", source:"тематический", status:"новое", reviewToday:false },
+  { word:"loyalty card", translation:"карта лояльности", phonetic:"/ˈlɔɪəlti kɑːrd/", pronounce:"ло́яльти кард", example:"Do you have a loyalty card with us?", exampleTranslation:"У вас есть наша карта лояльности?", category:"🛒 Магазин", source:"тематический", status:"новое", reviewToday:false },
+  { word:"voucher", translation:"ваучер; купон", phonetic:"/ˈvaʊtʃər/", pronounce:"ва́учэ", example:"You can use this voucher for 20% off.", exampleTranslation:"Вы можете использовать этот купон для скидки 20%.", category:"🛒 Магазин", source:"тематический", status:"новое", reviewToday:false },
+
+  // ── 💼 Работа и офис ──────────────────────────────────────
+  { word:"colleague", translation:"коллега", phonetic:"/ˈkɒliːɡ/", pronounce:"ко́лиг", example:"My colleague will cover for me while I am away.", exampleTranslation:"Мой коллега заменит меня, пока я буду отсутствовать.", category:"💼 Работа", source:"тематический", status:"новое", reviewToday:false },
+  { word:"promotion", translation:"повышение по службе", phonetic:"/prəˈmoʊʃn/", pronounce:"прэмо́ушн", example:"She got a promotion and a pay rise.", exampleTranslation:"Она получила повышение и прибавку к зарплете.", category:"💼 Работа", source:"тематический", status:"новое", reviewToday:false },
+  { word:"resign", translation:"увольняться; подавать в отставку", phonetic:"/rɪˈzaɪn/", pronounce:"риза́йн", example:"He decided to resign and start his own business.", exampleTranslation:"Он решил уволиться и открыть свой бизнес.", category:"💼 Работа", source:"тематический", status:"новое", reviewToday:false },
+  { word:"remote work", translation:"удалённая работа", phonetic:"/rɪˈmoʊt wɜːrk/", pronounce:"римо́ут вёрк", example:"Remote work has become very common since 2020.", exampleTranslation:"Удалённая работа стала очень распространённой с 2020 года.", category:"💼 Работа", source:"тематический", status:"новое", reviewToday:false },
+  { word:"workload", translation:"рабочая нагрузка", phonetic:"/ˈwɜːrkloʊd/", pronounce:"вёрклоуд", example:"The workload this month has been very heavy.", exampleTranslation:"В этом месяце рабочая нагрузка была очень высокой.", category:"💼 Работа", source:"тематический", status:"новое", reviewToday:false },
+  { word:"appraisal", translation:"оценка работы; аттестация", phonetic:"/əˈpreɪzl/", pronounce:"эпрэ́йзэл", example:"My annual appraisal is next week.", exampleTranslation:"На следующей неделе у меня ежегодная аттестация.", category:"💼 Работа", source:"тематический", status:"новое", reviewToday:false },
+  { word:"overtime", translation:"сверхурочная работа", phonetic:"/ˈoʊvərtaɪm/", pronounce:"о́увэтайм", example:"We worked overtime to meet the deadline.", exampleTranslation:"Мы работали сверхурочно, чтобы уложиться в срок.", category:"💼 Работа", source:"тематический", status:"новое", reviewToday:false },
+  { word:"probation", translation:"испытательный срок", phonetic:"/prəˈbeɪʃn/", pronounce:"прэбэ́йшн", example:"He is still on probation for the first three months.", exampleTranslation:"Он ещё на испытательном сроке — первые три месяца.", category:"💼 Работа", source:"тематический", status:"новое", reviewToday:false },
+  { word:"redundancy", translation:"сокращение (на работе)", phonetic:"/rɪˈdʌndənsi/", pronounce:"рида́ндэнси", example:"Several employees faced redundancy after the merger.", exampleTranslation:"Несколько сотрудников попали под сокращение после слияния.", category:"💼 Работа", source:"тематический", status:"новое", reviewToday:false },
+  { word:"pension", translation:"пенсия", phonetic:"/ˈpenʃn/", pronounce:"пэ́ншн", example:"The company offers a good pension scheme.", exampleTranslation:"Компания предлагает хорошую пенсионную программу.", category:"💼 Работа", source:"тематический", status:"новое", reviewToday:false },
+
+  // ── 🚗 Транспорт ──────────────────────────────────────────
+  { word:"fare", translation:"стоимость проезда", phonetic:"/feər/", pronounce:"фэ", example:"The bus fare has gone up again this year.", exampleTranslation:"Стоимость проезда в автобусе снова выросла в этом году.", category:"🚗 Транспорт", source:"тематический", status:"новое", reviewToday:false },
+  { word:"platform", translation:"платформа", phonetic:"/ˈplætfɔːrm/", pronounce:"плэ́тформ", example:"The train to London leaves from platform 3.", exampleTranslation:"Поезд в Лондон отправляется с платформы 3.", category:"🚗 Транспорт", source:"тематический", status:"новое", reviewToday:false },
+  { word:"timetable", translation:"расписание", phonetic:"/ˈtaɪmteɪbl/", pronounce:"та́ймтэйбл", example:"Check the timetable before you go to the station.", exampleTranslation:"Проверьте расписание перед тем, как идти на станцию.", category:"🚗 Транспорт", source:"тематический", status:"новое", reviewToday:false },
+  { word:"commute", translation:"добираться на работу", phonetic:"/kəˈmjuːt/", pronounce:"кэмью́т", example:"My daily commute takes about 45 minutes.", exampleTranslation:"Моя ежедневная поездка на работу занимает около 45 минут.", category:"🚗 Транспорт", source:"тематический", status:"новое", reviewToday:false },
+  { word:"congestion", translation:"пробка; перегруженность", phonetic:"/kənˈdʒestʃən/", pronounce:"кэнджэ́стшн", example:"Road congestion is a big problem in big cities.", exampleTranslation:"Дорожные пробки — большая проблема в крупных городах.", category:"🚗 Транспорт", source:"тематический", status:"новое", reviewToday:false },
+  { word:"petrol", translation:"бензин", phonetic:"/ˈpetrəl/", pronounce:"пэ́трэл", example:"Petrol prices have risen sharply.", exampleTranslation:"Цены на бензин резко выросли.", category:"🚗 Транспорт", source:"тематический", status:"новое", reviewToday:false },
+  { word:"overtake", translation:"обгонять", phonetic:"/ˌoʊvərˈteɪk/", pronounce:"оувэтэ́йк", example:"It is dangerous to overtake on a narrow road.", exampleTranslation:"Опасно обгонять на узкой дороге.", category:"🚗 Транспорт", source:"тематический", status:"новое", reviewToday:false },
+  { word:"carpool", translation:"совместная поездка", phonetic:"/ˈkɑːrpuːl/", pronounce:"ка́рпул", example:"We carpool to work to save on petrol costs.", exampleTranslation:"Мы ездим на работу вместе, чтобы сэкономить на бензине.", category:"🚗 Транспорт", source:"тематический", status:"новое", reviewToday:false },
+  { word:"breakdown", translation:"поломка (автомобиля)", phonetic:"/ˈbreɪkdaʊn/", pronounce:"брэ́йкдаун", example:"We had a breakdown on the motorway.", exampleTranslation:"У нас была поломка на шоссе.", category:"🚗 Транспорт", source:"тематический", status:"новое", reviewToday:false },
+  { word:"toll", translation:"дорожный сбор; платная дорога", phonetic:"/toʊl/", pronounce:"тоул", example:"There is a toll to use this bridge.", exampleTranslation:"За проезд по этому мосту взимается плата.", category:"🚗 Транспорт", source:"тематический", status:"новое", reviewToday:false },
+];
+
+
+// ─── Reading data ─────────────────────────────────────────────
+const readingTexts = [
+  {
+    id:'ohenry-gift',
+    author:'О. Генри',
+    title:'The Gift of the Magi',
+    level:'B1',
+    text:"One dollar and eighty-seven cents. That was all. And sixty cents of it was in pennies. Pennies saved one and two at a time by bulldozing the grocer and the vegetable man and the butcher until one's cheeks burned with the silent imputation of parsimony that such close dealing implied.",
+    translation:"Один доллар и восемьдесят семь центов. Вот и всё. И шестьдесят центов из них — в пенни. Пенни, откладываемые по одному и по два, путём упорного торга с бакалейщиком, зеленщиком и мясником — до тех пор, пока не вспыхивали щёки от молчаливого намёка на скупость, которую предполагал такой жёсткий торг.",
+    words:[
+      {w:'pennies', t:'пенни — мелкие монеты'},
+      {w:'parsimony', t:'скупость, бережливость'},
+      {w:'implied', t:'подразумевал, предполагал'},
+      {w:'cheeks burned', t:'щёки горели (от стыда)'},
+      {w:'dealing', t:'здесь: торговля, отношения'}
+    ]
+  },
+  {
+    id:'ohenry-last-leaf',
+    author:'О. Генри',
+    title:'The Last Leaf',
+    level:'B1',
+    text:"In a little district west of Washington Square the streets have run crazy and broken themselves into small strips called \"places.\" These \"places\" make strange angles and curves. One street crosses itself a time or two. An artist once discovered a valuable possibility in this street. Suppose a collector with a bill for paints, paper and canvas should, in traversing this route, suddenly meet himself coming back, without a cent having been paid on account!",
+    translation:"В маленьком квартале к западу от Вашингтон-сквер улицы сошли с ума и разбились на маленькие полоски, называемые \"тупиками\". Эти \"тупики\" образуют странные углы и изгибы. Одна улица пересекает сама себя один-два раза. Художник однажды обнаружил в этой улице ценную возможность. Представьте: сборщик долгов с задолженностями за краски, бумагу и холст, обходя этот маршрут, вдруг встречает самого себя, идущего навстречу, — и ни цента не уплачено!",
+    words:[
+      {w:'district', t:'квартал, район'},
+      {w:'strips', t:'полоски, узкие участки'},
+      {w:'traversing', t:'проходя, пересекая'},
+      {w:'collector', t:'здесь: сборщик долгов'},
+      {w:'canvas', t:'холст'}
+    ]
+  },
+  {
+    id:'ohenry-roads',
+    author:'О. Генри',
+    title:'Roads of Destiny',
+    level:'B2',
+    text:"David Mignot, poet of Gaul, trudged wearily through the mud of the road. His feet were sore in the ill-fitting shoes he had bought second-hand. His purse held but a few sous. His heart was high, for he had a dream to follow — the dream of fame and the favour of the great city of Paris.",
+    translation:"Давид Миньо, поэт из Галлии, устало брёл по грязной дороге. Ноги болели в плохо подогнанных туфлях, купленных с чужого плеча. В кошельке было лишь несколько су. Но сердце было полно надежды, ибо у него была мечта — мечта о славе и благосклонности великого города Парижа.",
+    words:[
+      {w:'trudged', t:'брёл, тащился (тяжело шёл)'},
+      {w:'wearily', t:'устало, с усталостью'},
+      {w:'purse', t:'кошелёк'},
+      {w:'favour', t:'расположение, благосклонность'},
+      {w:'ill-fitting', t:'плохо подогнанный, не по размеру'}
+    ]
+  },
+  {
+    id:'doyle-scandal',
+    author:'Конан Дойл',
+    title:'A Scandal in Bohemia',
+    level:'B2',
+    text:"To Sherlock Holmes she is always the woman. I have seldom heard him mention her under any other name. In his eyes she eclipses and predominates the whole of her sex. It was not that he felt any emotion akin to love for Irene Adler. All emotions, and that one particularly, were abhorrent to his cold, precise but admirably balanced mind.",
+    translation:"Для Шерлока Холмса она всегда была просто Женщиной. Я редко слышал, чтобы он называл её иначе. В его глазах она затмевала и превосходила весь свой пол. Дело было не в том, что он испытывал к Ирэн Адлер какое-либо чувство, близкое к любви. Все эмоции, и эта в особенности, были чужды его холодному, точному, но восхитительно уравновешенному уму.",
+    words:[
+      {w:'eclipses', t:'затмевает, превосходит'},
+      {w:'predominates', t:'господствует, преобладает'},
+      {w:'akin to', t:'близкий к, похожий на'},
+      {w:'abhorrent', t:'отвратительный, чуждый'},
+      {w:'admirably', t:'восхитительно, замечательно'}
+    ]
+  },
+  {
+    id:'doyle-final',
+    author:'Конан Дойл',
+    title:'The Final Problem',
+    level:'B2',
+    text:"It is with a heavy heart that I take up my pen to write these the last words in which I shall ever record the singular gifts by which my friend Mr. Sherlock Holmes was distinguished. In an inexplicable way, connected with the extraordinary man whom I had the privilege of calling my friend, I have been moved to set it on record.",
+    translation:"С тяжёлым сердцем берусь я за перо, чтобы написать эти последние слова, в которых мне когда-либо придётся описывать исключительные дарования, которыми отличался мой друг мистер Шерлок Холмс. Неким необъяснимым образом, связанным с этим незаурядным человеком, которого я имел честь называть своим другом, я был побуждён оставить это свидетельство.",
+    words:[
+      {w:'singular', t:'исключительный, выдающийся'},
+      {w:'distinguished', t:'отличался, выделялся'},
+      {w:'inexplicable', t:'необъяснимый'},
+      {w:'privilege', t:'честь, привилегия'},
+      {w:'set on record', t:'зафиксировать, оставить свидетельство'}
+    ]
+  },
+  {
+    id:'doyle-hound',
+    author:'Конан Дойл',
+    title:'The Hound of the Baskervilles',
+    level:'B1',
+    text:"Mr. Sherlock Holmes, who was usually very late in the mornings, save upon those not infrequent occasions when he was up all night, was seated at the breakfast table. I stood upon the hearth-rug and picked up the stick which our visitor had left behind him the night before. It was a fine, thick piece of wood, bulbous-headed.",
+    translation:"Мистер Шерлок Холмс, который обычно вставал очень поздно по утрам — за исключением нередких случаев, когда он не ложился всю ночь, — сидел за завтраком. Я стоял на коврике у камина и рассматривал трость, которую наш вчерашний посетитель оставил у нас. Это была крепкая деревянная палка с набалдашником.",
+    words:[
+      {w:'save upon', t:'за исключением (устаревшее)'},
+      {w:'infrequent', t:'нечастый (здесь: нередкий)'},
+      {w:'hearth-rug', t:'коврик перед камином'},
+      {w:'bulbous-headed', t:'с шарообразным навершием'},
+      {w:'stick', t:'трость, палка'}
+    ]
+  },
+  {
+    id:'wilde-importance',
+    author:'Оскар Уайльд',
+    title:'The Importance of Being Earnest',
+    level:'B2',
+    text:"The truth is rarely pure and never simple. Modern life would be very tedious if it were either, and modern literature a complete impossibility. To be natural is such a very difficult pose to keep up. The good ended happily, and the bad unhappily. That is what Fiction means.",
+    translation:"Правда редко бывает чистой и никогда — простой. Современная жизнь была бы очень скучной, если бы она была и тем, и другим, а современная литература стала бы совершенно невозможной. Быть естественным — это очень трудная поза, которую сложно поддерживать. Хорошие заканчивают счастливо, плохие — несчастливо. Вот что такое художественная литература.",
+    words:[
+      {w:'rarely', t:'редко'},
+      {w:'tedious', t:'скучный, утомительный'},
+      {w:'pose', t:'здесь: притворство, маска'},
+      {w:'Fiction', t:'художественная литература'},
+      {w:'keep up', t:'поддерживать, сохранять'}
+    ]
+  },
+  {
+    id:'wilde-dorian',
+    author:'Оскар Уайльд',
+    title:'The Picture of Dorian Gray',
+    level:'B2',
+    text:"The only way to get rid of a temptation is to yield to it. Resist it, and your soul grows sick with longing for the things it has forbidden to itself, with desire for what its monstrous laws have made monstrous and unlawful. To define is to limit.",
+    translation:"Единственный способ избавиться от искушения — уступить ему. Сопротивляйся ему — и душа твоя заболеет тоской по тому, что она сама себе запретила, желанием того, что её чудовищные законы сделали чудовищным и незаконным. Дать определение — значит ограничить.",
+    words:[
+      {w:'temptation', t:'искушение, соблазн'},
+      {w:'yield', t:'уступать, поддаваться'},
+      {w:'longing', t:'тоска, страстное желание'},
+      {w:'monstrous', t:'чудовищный, чудовищно'},
+      {w:'forbidden', t:'запрещённый, запретный'}
+    ]
+  },
+  {
+    id:'wilde-happy-prince',
+    author:'Оскар Уайльд',
+    title:'The Happy Prince',
+    level:'B1',
+    text:"High above the city, on a tall column, stood the statue of the Happy Prince. He was gilded all over with thin leaves of fine gold, for eyes he had two bright sapphires, and great red ruby glowed on his sword-hilt. He was very much admired indeed. \"Why can't you be like the Happy Prince?\" asked a sensible mother of her little boy who was crying for the moon.",
+    translation:"Высоко над городом, на высокой колонне стояла статуя Счастливого Принца. Он был покрыт тонкими листами чистого золота, глаза у него были из двух ярких сапфиров, а на рукояти меча горел крупный красный рубин. Им все очень восхищались. \"Почему ты не можешь быть как Счастливый Принц?\" — спросила благоразумная мать своего маленького сына, который плакал, требуя луну с неба.",
+    words:[
+      {w:'gilded', t:'позолоченный, покрытый золотом'},
+      {w:'sapphires', t:'сапфиры'},
+      {w:'ruby', t:'рубин'},
+      {w:'sword-hilt', t:'рукоять меча'},
+      {w:'admired', t:'восхищались, любовались'}
+    ]
+  },
+  {
+    id:'london-call',
+    author:'Джек Лондон',
+    title:'The Call of the Wild',
+    level:'B1',
+    text:"Buck did not read the newspapers, or he would have known that trouble was brewing, not alone for himself, but for every tide-water dog, strong of muscle and warm of long hair, from Puget Sound to San Diego. Because men, groping in the Arctic darkness, had found a yellow metal, and because steamship and transportation companies were booming the find, thousands of men were rushing into the Northland.",
+    translation:"Бэк не читал газет, а то бы он узнал, что надвигается беда — не только для него, но и для каждой собаки на побережье, сильной телом и с густой тёплой шерстью, от Пьюджет-Саунда до Сан-Диего. Потому что люди, шарившие во мраке Арктики, нашли жёлтый металл, и поскольку пароходные и транспортные компании раздували эту находку, тысячи людей устремились на Север.",
+    words:[
+      {w:'brewing', t:'назревать, готовиться (о беде)'},
+      {w:'tide-water', t:'прибрежный, живущий у воды'},
+      {w:'groping', t:'нащупывать, шарить в темноте'},
+      {w:'booming', t:'раздувать, активно продвигать'},
+      {w:'rushing', t:'устремляться, нестись'}
+    ]
+  },
+  {
+    id:'london-seawolf',
+    author:'Джек Лондон',
+    title:'The Sea Wolf',
+    level:'B2',
+    text:"I scarcely know where to begin, though I sometimes facetiously place the cause of it all to Charley Furuseth's credit. He kept a summer cottage in Mill Valley, under the shadow of Mount Tamalpais, and never occupied it except when he loafed through the winter months with a cold he had caught in the preceding summer.",
+    translation:"Я едва знаю, с чего начать, хотя иногда в шутку приписываю всему этому заслугу Чарли Фурусета. У него был летний коттедж в Милл-Вэлли, в тени горы Тамалпаис, и он занимал его только тогда, когда бездельничал зимой с простудой, подхваченной предыдущим летом.",
+    words:[
+      {w:'scarcely', t:'едва, почти не'},
+      {w:'facetiously', t:'в шутку, несерьёзно'},
+      {w:'loafed', t:'бездельничал, слонялся'},
+      {w:'preceding', t:'предыдущий, предшествующий'},
+      {w:'cottage', t:'коттедж, домик'}
+    ]
+  },
+  {
+    id:'london-martin-eden',
+    author:'Джек Лондон',
+    title:'Martin Eden',
+    level:'B2',
+    text:"The one thing that Martin could not quite shake off was the consciousness of his own ignorance. He was perpetually astounded by the knowledge Ruth possessed. Not alone the things she knew, but the way she knew them. She had a way of cutting to the heart of a subject, of seeing it as it really was, that made him feel as if he were reading the alphabet.",
+    translation:"Единственное, от чего Мартин никак не мог избавиться, — это осознание собственного невежества. Он постоянно поражался знаниям Рут. Не только тому, что она знала, но и тому, как она это знала. У неё была способность добираться до сути предмета, видеть его таким, каким он является на самом деле, — так что он чувствовал себя человеком, учащим азбуку.",
+    words:[
+      {w:'perpetually', t:'постоянно, беспрестанно'},
+      {w:'astounded', t:'поражённый, изумлённый'},
+      {w:'ignorance', t:'невежество, незнание'},
+      {w:'cutting to the heart', t:'добираться до сути'},
+      {w:'possessed', t:'здесь: имела, обладала'}
+    ]
+  },
+  {
+    id:'wilde-quote1',
+    author:'Оскар Уайльд',
+    title:'Крылатые фразы',
+    level:'B1',
+    text:"We are all in the gutter, but some of us are looking at the stars. Experience is simply the name we give our mistakes. A man who does not think for himself does not think at all. To live is the rarest thing in the world. Most people exist, that is all.",
+    translation:"Все мы в канаве, но некоторые из нас смотрят на звёзды. Опыт — это просто название, которое мы даём своим ошибкам. Человек, который не думает за себя, вообще не думает. Жить — редчайшая вещь на свете. Большинство людей просто существуют, вот и всё.",
+    words:[
+      {w:'gutter', t:'канава, водосточная канава'},
+      {w:'rarest', t:'редчайший (превосходная степень)'},
+      {w:'exist', t:'существовать (в отличие от "жить")'},
+      {w:'experience', t:'опыт'},
+      {w:'think for himself', t:'думать самостоятельно'}
+    ]
+  },
+  {
+    id:'doyle-quote1',
+    author:'Конан Дойл',
+    title:'Цитаты Холмса',
+    level:'B1',
+    text:"When you have eliminated the impossible, whatever remains, however improbable, must be the truth. It is a capital mistake to theorize before one has data. Insensibly one begins to twist facts to suit theories, instead of theories to suit facts. The world is full of obvious things which nobody by any chance ever observes.",
+    translation:"Когда вы исключили невозможное, то, что осталось, каким бы невероятным оно ни казалось, и есть правда. Величайшая ошибка — строить теории, не имея данных. Незаметно для себя начинаешь подгонять факты под теории вместо того, чтобы подгонять теории под факты. Мир полон очевидных вещей, которых никто почему-то никогда не замечает.",
+    words:[
+      {w:'eliminated', t:'исключили, устранили'},
+      {w:'improbable', t:'невероятный, маловероятный'},
+      {w:'capital mistake', t:'величайшая ошибка'},
+      {w:'insensibly', t:'незаметно, постепенно'},
+      {w:'twist facts', t:'подгонять, искажать факты'}
+    ]
+  },
+  {
+    id:'london-quote1',
+    author:'Джек Лондон',
+    title:'Цитаты и мудрость',
+    level:'B1',
+    text:"The proper function of man is to live, not to exist. I shall not waste my days in trying to prolong them. I shall use my time. A bone to the dog is not charity. Charity is the bone shared with the dog, when you are just as hungry as the dog. Life is not always a matter of holding good cards, but sometimes, playing a poor hand well.",
+    translation:"Истинная функция человека — жить, а не существовать. Я не буду тратить свои дни, пытаясь их продлить. Я буду использовать своё время. Кость собаке — это не милосердие. Милосердие — это кость, которую ты делишь с собакой, когда сам так же голоден, как она. Жизнь — не всегда вопрос хороших карт, но иногда — умения хорошо сыграть плохую руку.",
+    words:[
+      {w:'proper function', t:'истинное предназначение, функция'},
+      {w:'prolong', t:'продлевать, затягивать'},
+      {w:'charity', t:'милосердие, благотворительность'},
+      {w:'matter of', t:'вопрос чего-либо'},
+      {w:'playing a poor hand', t:'играть плохими картами (метафора)'}
+    ]
+  },
+];
+
+
+// ─── Quotes data ──────────────────────────────────────────────
+const famousQuotes = [
+  { id:'q-churchill-1', person:'Winston Churchill', about:'Британский премьер-министр', quote:"Success is not final, failure is not fatal: it is the courage to continue that counts.", translation:"Успех не окончателен, неудача не смертельна: важна лишь смелость продолжать." },
+  { id:'q-churchill-2', person:'Winston Churchill', about:'Британский премьер-министр', quote:"We make a living by what we get, but we make a life by what we give.", translation:"Мы зарабатываем на жизнь тем, что получаем, но саму жизнь мы создаём тем, что отдаём." },
+  { id:'q-churchill-3', person:'Winston Churchill', about:'Британский премьер-министр', quote:"A pessimist sees the difficulty in every opportunity; an optimist sees the opportunity in every difficulty.", translation:"Пессимист видит трудность в каждой возможности; оптимист видит возможность в каждой трудности." },
+  { id:'q-einstein-1', person:'Albert Einstein', about:'Физик, лауреат Нобелевской премии', quote:"Imagination is more important than knowledge. Knowledge is limited. Imagination encircles the world.", translation:"Воображение важнее знания. Знание ограничено. Воображение охватывает весь мир." },
+  { id:'q-einstein-2', person:'Albert Einstein', about:'Физик, лауреат Нобелевской премии', quote:"The measure of intelligence is the ability to change. Life is like riding a bicycle. To keep your balance, you must keep moving.", translation:"Мера интеллекта — способность меняться. Жизнь похожа на езду на велосипеде. Чтобы сохранять равновесие, нужно двигаться." },
+  { id:'q-einstein-3', person:'Albert Einstein', about:'Физик, лауреат Нобелевской премии', quote:"Try not to become a man of success, but rather try to become a man of value.", translation:"Старайся не стать человеком успеха, а старайся стать человеком ценности." },
+  { id:'q-twain-1', person:'Mark Twain', about:'Американский писатель и юморист', quote:"The secret of getting ahead is getting started. The best time to start is yesterday. The second best time is now.", translation:"Секрет успеха — начать действовать. Лучшее время для начала — вчера. Второе лучшее время — сейчас." },
+  { id:'q-twain-2', person:'Mark Twain', about:'Американский писатель и юморист', quote:"It is better to keep your mouth closed and let people think you are a fool than to open it and remove all doubt.", translation:"Лучше молчать и казаться дураком, чем открыть рот и развеять все сомнения." },
+  { id:'q-twain-3', person:'Mark Twain', about:'Американский писатель и юморист', quote:"Twenty years from now you will be more disappointed by the things that you did not do than by the ones you did do.", translation:"Через двадцать лет ты будешь больше сожалеть о том, чего не сделал, чем о том, что сделал." },
+  { id:'q-lincoln-1', person:'Abraham Lincoln', about:'16-й президент США', quote:"Give me six hours to chop down a tree and I will spend the first four sharpening the axe.", translation:"Дайте мне шесть часов, чтобы срубить дерево, и первые четыре я потрачу на заточку топора." },
+  { id:'q-lincoln-2', person:'Abraham Lincoln', about:'16-й президент США', quote:"You can fool all the people some of the time, and some of the people all the time, but you cannot fool all the people all the time.", translation:"Можно дурачить всех людей некоторое время, и некоторых людей всё время, но нельзя дурачить всех людей всё время." },
+  { id:'q-shakespeare-1', person:'William Shakespeare', about:'Английский драматург и поэт', quote:"We know what we are, but know not what we may be. What is in a name? That which we call a rose by any other name would smell as sweet.", translation:"Мы знаем, кто мы есть, но не знаем, кем можем стать. Что значит имя? То, что мы называем розой, под любым другим именем пахло бы так же сладко." },
+  { id:'q-shakespeare-2', person:'William Shakespeare', about:'Английский драматург и поэт', quote:"All the world is a stage, and all the men and women merely players. They have their exits and their entrances, and one man in his time plays many parts.", translation:"Весь мир — театр, и все мужчины и женщины в нём лишь актёры. У каждого есть свои выходы и входы, и каждый человек в своё время играет много ролей." },
+  { id:'q-jobs-1', person:'Steve Jobs', about:'Сооснователь Apple', quote:"Your work is going to fill a large part of your life, and the only way to be truly satisfied is to do what you believe is great work. And the only way to do great work is to love what you do.", translation:"Работа займёт большую часть вашей жизни, и единственный способ быть по-настоящему удовлетворённым — делать то, что считаешь великим делом. А единственный способ делать великое дело — любить то, что делаешь." },
+  { id:'q-jobs-2', person:'Steve Jobs', about:'Сооснователь Apple', quote:"Stay hungry, stay foolish. Innovation distinguishes between a leader and a follower. Think different.", translation:"Оставайтесь голодными, оставайтесь безрассудными. Инновации отличают лидера от последователя. Думайте иначе." },
+  { id:'q-mandela-1', person:'Nelson Mandela', about:'Борец за права человека, президент ЮАР', quote:"It always seems impossible until it is done. Education is the most powerful weapon which you can use to change the world.", translation:"Всё кажется невозможным, пока это не сделано. Образование — самое мощное оружие, которое можно использовать для изменения мира." },
+  { id:'q-mandela-2', person:'Nelson Mandela', about:'Борец за права человека, президент ЮАР', quote:"Do not judge me by my successes, judge me by how many times I fell down and got back up again.", translation:"Судите меня не по моим успехам, а по тому, сколько раз я падал и поднимался снова." },
+  { id:'q-roosevelt-1', person:'Theodore Roosevelt', about:'26-й президент США', quote:"Believe you can and you are halfway there. Do what you can, with what you have, where you are.", translation:"Верь, что ты можешь — и ты уже на полпути. Делай что можешь, тем что имеешь, там где находишься." },
+  { id:'q-aristotle-1', person:'Aristotle', about:'Древнегреческий философ', quote:"We are what we repeatedly do. Excellence, then, is not an act but a habit. Knowing yourself is the beginning of all wisdom.", translation:"Мы — то, что мы постоянно делаем. Совершенство — это не действие, а привычка. Познание себя — начало всякой мудрости." },
+  { id:'q-confucius-1', person:'Confucius', about:'Китайский философ', quote:"It does not matter how slowly you go as long as you do not stop. Choose a job you love, and you will never have to work a day in your life.", translation:"Неважно, как медленно ты идёшь, главное — не останавливаться. Выбери работу, которую любишь, и тебе не придётся работать ни одного дня в жизни." },
 ];
 
 const resourceLinks = [
@@ -927,6 +1303,13 @@ const state = {
   copied: '',
   activeGrammar: 'present-simple',
   verbSearch: '',
+  readingActive: null,
+  readingLevel: 'все',
+  readingAuthor: 'все',
+  showReadingTranslation: false,
+  readingTab: 'texts',
+  quoteSearch: '',
+  showQuoteTranslation: {},
   quiz: { current: null, options: [], answered: null, score: 0, total: 0, mode: 'translation', categoryFilter: 'все' },
 };
 
@@ -936,6 +1319,7 @@ const tabs = [
   ['dictionary','Словарь'],
   ['review','Повторение'],
   ['quiz','Тест'],
+  ['reading','Чтение'],
   ['topics','Speaking'],
   ['grammar','Грамматика'],
   ['resources','Ресурсы'],
@@ -1719,7 +2103,7 @@ function renderQuiz(){
           <div style="text-align:center;padding:24px 16px 28px;background:var(--primary-soft);border-radius:var(--radius-sm);margin-bottom:16px">
             <div class="small-muted" style="margin-bottom:8px">${q.mode==='translation'?'Что означает это слово?':'Как это будет по-английски?'}</div>
             <div style="font-size:32px;font-weight:900;letter-spacing:-.02em;color:var(--primary-text)">${showQuestion}</div>
-            ${q.mode==='translation' && w.phonetic?`<div class="small-muted" style="margin-top:6px">${esc(w.phonetic)}</div>`:''}
+            ${q.mode==='translation' && (w.phonetic||w.pronounce)?`<div style="margin-top:8px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">  ${w.phonetic?`<span style="font-size:13px;color:var(--muted);background:var(--bg);padding:3px 10px;border-radius:99px;border:1px solid var(--line)">${esc(w.phonetic)}</span>`:''} ${w.pronounce?`<span style="font-size:13px;color:var(--primary-text);background:var(--primary-soft);padding:3px 10px;border-radius:99px;border:1px solid #c7d2fe;font-weight:600">${esc(w.pronounce)}</span>`:''}</div>`:''}
           </div>
 
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
@@ -1813,6 +2197,161 @@ function renderQuiz(){
     </div>`;
 }
 
+
+// ─── Reading ──────────────────────────────────────────────────
+function renderReading(){
+  const levelFilter = state.readingLevel || 'все';
+  const authorFilter = state.readingAuthor || 'все';
+  const activeId = state.readingActive || null;
+  const tab = state.readingTab || 'texts';
+
+  const authors = ['все', ...Array.from(new Set(readingTexts.map(x=>x.author)))];
+  const levels = ['все','B1','B2'];
+  const filtered = readingTexts.filter(x =>
+    (levelFilter==='все' || x.level===levelFilter) &&
+    (authorFilter==='все' || x.author===authorFilter)
+  );
+  const active = activeId ? readingTexts.find(x=>x.id===activeId) : null;
+
+  const qSearch = (state.quoteSearch||'').toLowerCase();
+  const filteredQuotes = famousQuotes.filter(q =>
+    !qSearch || q.person.toLowerCase().includes(qSearch) || q.quote.toLowerCase().includes(qSearch) || q.translation.toLowerCase().includes(qSearch)
+  );
+
+  document.getElementById('reading').innerHTML = `
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <button class="btn ${tab==='texts'?'':'secondary'}" onclick="setReadingTab('texts')">📖 Отрывки из книг</button>
+      <button class="btn ${tab==='quotes'?'':'secondary'}" onclick="setReadingTab('quotes')">💬 Крылатые фразы</button>
+    </div>
+
+    ${tab==='texts' ? `
+    <div class="grid-2" style="grid-template-columns:260px 1fr;align-items:start">
+      <div class="card" style="padding:14px">
+        <div class="section-title" style="margin-bottom:12px">Библиотека</div>
+        <div style="display:grid;gap:6px;margin-bottom:12px">
+          <select onchange="setReadingFilter('level',this.value)">
+            ${levels.map(l=>`<option value="${l}" ${levelFilter===l?'selected':''}>${l==='все'?'Все уровни':l}</option>`).join('')}
+          </select>
+          <select onchange="setReadingFilter('author',this.value)">
+            ${authors.map(a=>`<option value="${esc(a)}" ${authorFilter===a?'selected':''}>${a==='все'?'Все авторы':esc(a)}</option>`).join('')}
+          </select>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          ${filtered.map(t=>`
+            <button onclick="setReadingActive('${t.id}')"
+              style="text-align:left;padding:10px 12px;border-radius:var(--radius-xs);border:1px solid ${activeId===t.id?'var(--primary)':'var(--line)'};background:${activeId===t.id?'var(--primary-soft)':'transparent'};cursor:pointer;font:inherit;color:var(--text);transition:all .15s">
+              <div style="font-size:13px;font-weight:700;color:${activeId===t.id?'var(--primary-text)':'var(--text)'}">${esc(t.title)}</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px">${esc(t.author)} · <span style="background:${t.level==='B1'?'#eff6ff':'#f0fdf4'};color:${t.level==='B1'?'#2563eb':'#16a34a'};padding:1px 6px;border-radius:99px">${t.level}</span></div>
+            </button>`).join('')}
+        </div>
+      </div>
+
+      <div>
+        ${!active ? `
+          <div class="card" style="text-align:center;padding:48px 24px">
+            <div style="font-size:48px;margin-bottom:16px">📖</div>
+            <div style="font-size:18px;font-weight:700;margin-bottom:8px">Выбери отрывок слева</div>
+            <div class="small-muted">15 текстов от О. Генри, Конан Дойла, Оскара Уайльда и Джека Лондона</div>
+          </div>` : `
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:16px">
+              <div>
+                <div class="section-title">${esc(active.title)}</div>
+                <div class="small-muted">${esc(active.author)} · <span style="background:${active.level==='B1'?'#eff6ff':'#f0fdf4'};color:${active.level==='B1'?'#2563eb':'#16a34a'};padding:2px 8px;border-radius:99px;font-size:12px;font-weight:700">${active.level}</span></div>
+              </div>
+              <button class="btn secondary small" onclick="speakText(${safeJson(active.text)})">🔊 Озвучить</button>
+            </div>
+            <div style="font-size:16px;line-height:1.85;padding:20px;background:var(--bg);border-radius:var(--radius-sm);margin-bottom:16px;border:1px solid var(--line)">
+              ${esc(active.text)}
+            </div>
+            <div style="margin-bottom:16px">
+              <button class="btn secondary small" onclick="toggleReadingTranslation()" style="margin-bottom:10px">
+                ${state.showReadingTranslation?'Скрыть перевод':'Показать перевод'}
+              </button>
+              ${state.showReadingTranslation?`
+                <div style="font-size:14px;line-height:1.75;padding:16px;background:var(--primary-soft);border-radius:var(--radius-sm);color:var(--primary-text);border:1px solid #c7d2fe">
+                  ${esc(active.translation)}
+                </div>`:``}
+            </div>
+            <div>
+              <div class="section-title" style="font-size:14px;margin-bottom:10px">🔑 Ключевые слова</div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px">
+                ${active.words.map(w=>`
+                  <div style="padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius-xs);background:var(--card)">
+                    <div style="font-weight:700;font-size:14px;color:var(--primary)">${esc(w.w)}</div>
+                    <div style="font-size:12px;color:var(--muted);margin-top:3px">${esc(w.t)}</div>
+                    <button class="btn secondary small" style="margin-top:6px;font-size:11px" onclick="speakText(${safeJson(w.w)})">🔊</button>
+                  </div>`).join('')}
+              </div>
+            </div>
+            <div class="notice" style="margin-top:16px">
+              💡 Метод extensive reading: читай не переводя каждое слово — старайся понять смысл из контекста. Перевод открывай только для проверки.
+            </div>
+          </div>`}
+      </div>
+    </div>` : `
+
+    <div class="card" style="margin-bottom:16px">
+      <input placeholder="Поиск по автору или тексту фразы..." value="${esc(state.quoteSearch||'')}" oninput="setQuoteSearch(this.value)">
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px">
+      ${filteredQuotes.map(q=>`
+        <div style="background:var(--card);border:1px solid var(--line);border-radius:var(--radius-sm);padding:20px;display:flex;flex-direction:column;gap:12px;transition:all .15s ease">
+          <div style="font-size:15px;line-height:1.7;font-style:italic;color:var(--text);border-left:3px solid var(--primary);padding-left:14px">
+            "${esc(q.quote)}"
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+            <div>
+              <div style="font-weight:700;font-size:13px">${esc(q.person)}</div>
+              <div style="font-size:11px;color:var(--muted)">${esc(q.about)}</div>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button class="btn secondary small" onclick="speakText(${safeJson(q.quote)})">🔊</button>
+              <button class="btn secondary small" onclick="toggleQuoteTranslation('${q.id}')">
+                ${(state.showQuoteTranslation||{})[q.id]?'Скрыть':'Перевод'}
+              </button>
+            </div>
+          </div>
+          ${(state.showQuoteTranslation||{})[q.id]?`
+            <div style="font-size:13px;line-height:1.6;padding:10px 14px;background:var(--primary-soft);border-radius:var(--radius-xs);color:var(--primary-text)">
+              ${esc(q.translation)}
+            </div>`:``}
+        </div>`).join('')}
+    </div>`}`;
+}
+
+function setReadingActive(id){
+  state.readingActive = id;
+  state.showReadingTranslation = false;
+  renderReading();
+}
+function setReadingFilter(type, value){
+  if(type==='level') state.readingLevel = value;
+  else state.readingAuthor = value;
+  state.readingActive = null;
+  state.showReadingTranslation = false;
+  renderReading();
+}
+function toggleReadingTranslation(){
+  state.showReadingTranslation = !state.showReadingTranslation;
+  renderReading();
+}
+function setReadingTab(tab){
+  state.readingTab = tab;
+  state.readingActive = null;
+  state.showReadingTranslation = false;
+  renderReading();
+}
+function setQuoteSearch(v){
+  state.quoteSearch = v;
+  renderReading();
+}
+function toggleQuoteTranslation(id){
+  if(!state.showQuoteTranslation) state.showQuoteTranslation = {};
+  state.showQuoteTranslation[id] = !state.showQuoteTranslation[id];
+  renderReading();
+}
+
 // ─── Resources ────────────────────────────────────────────────
 function renderResources(){
   document.getElementById('resources').innerHTML = `
@@ -1871,6 +2410,7 @@ function renderAll(){
   renderReview();
   generateQuizQuestion();
   renderQuiz();
+  renderReading();
   renderTopics();
   renderGrammar();
   renderResources();
