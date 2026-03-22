@@ -1415,6 +1415,22 @@ function persist(){
   save(STORAGE_KEYS.dictionary, state.dictionary);
   save(STORAGE_KEYS.topics, state.topics);
 }
+function resetDictionary(){
+  if(!confirm('Обновить словарь до последней версии?\n\nТвои слова (источник: пользователь) сохранятся.\nВсе стартовые слова заменятся на новую версию с 230 словами.')) return;
+  // Keep only user-added words
+  const userWords = state.dictionary.filter(w => w.source === 'пользователь');
+  // Start fresh with all starter words
+  const fresh = normalizeDictionary(starterWords);
+  // Merge: fresh words first, then user words that aren't duplicates
+  const freshWordSet = new Set(fresh.map(w => w.word.toLowerCase()));
+  const uniqueUserWords = userWords.filter(w => !freshWordSet.has(w.word.toLowerCase()));
+  state.dictionary = [...fresh, ...uniqueUserWords];
+  persist();
+  renderDashboard();
+  renderDictionary();
+  renderReview();
+  alert('Готово! Словарь обновлён: ' + fresh.length + ' базовых слов + ' + uniqueUserWords.length + ' ваших слов = ' + state.dictionary.length + ' всего.');
+}
 function exportData(){
   const blob = new Blob([JSON.stringify({ settings:state.settings, tracker:state.tracker, dictionary:state.dictionary, topics:state.topics }, null, 2)], {type:'application/json'});
   const url = URL.createObjectURL(blob);
@@ -1559,6 +1575,7 @@ function renderDashboard(){
         <div class="notice">Чтобы не потерять прогресс, экспортируй данные в JSON и позже импортируй их обратно.</div>
         <div class="button-row">
           <button class="btn" onclick="exportData()">Экспорт данных</button>
+          <button class="btn soft" onclick="resetDictionary()">🔄 Обновить словарь</button>
           <label class="btn secondary" style="cursor:pointer;margin:0">
             Импорт данных
             <input type="file" accept="application/json" onchange="importData(this)" style="display:none">
